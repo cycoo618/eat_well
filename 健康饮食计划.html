@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>健康饮食计划 · 1478千卡</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream:    #faf6ef;
+      --paper:    #f3ede2;
+      --forest:   #2c5f3f;
+      --sage:     #7aab8a;
+      --bark:     #8b5e3c;
+      --ember:    #d4623a;
+      --gold:     #c9963a;
+      --ink:      #1c1812;
+      --mist:     #6b6358;
+      --divider:  #dfd8cc;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 18px; }
+
+    body {
+      font-family: "Noto Serif SC", "Songti SC", Georgia, serif;
+      background-color: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── Grain texture overlay ── */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── Decorative blobs ── */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-1 { width: 500px; height: 500px; background: #a8d5b0; top: -120px; right: -100px; }
+    .blob-2 { width: 380px; height: 380px; background: #e8c97a; bottom: 10%; left: -80px; }
+    .blob-3 { width: 260px; height: 260px; background: #e07a5f; top: 40%; right: -60px; }
+
+    /* ── Page wrapper ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+
+    /* ══ HERO ══ */
+    .hero {
+      text-align: center;
+      padding-bottom: 56px;
+      border-bottom: 1.5px solid var(--divider);
+      margin-bottom: 64px;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--sage);
+      border: 1px solid var(--sage);
+      border-radius: 2px;
+      padding: 4px 14px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: 3.4rem;
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 14px;
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--mist);
+      font-style: italic;
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    /* Calorie ring display */
+    .kcal-display {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--forest);
+      color: #fff;
+      padding: 22px 48px;
+      border-radius: 4px;
+      gap: 2px;
+    }
+    .kcal-display .num {
+      font-family: "Lora", Georgia, serif;
+      font-size: 3rem;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .kcal-display .label {
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    /* ── Calorie bar ── */
+    .kcal-bar-wrap {
+      margin-top: 40px;
+      background: var(--paper);
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+      display: flex;
+      gap: 3px;
+    }
+    .kcal-bar-seg {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 1s ease 0.5s;
+    }
+    .bar-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .bar-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--mist);
+    }
+    .bar-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ══ TIMELINE ══ */
+    .timeline {
+      position: relative;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 62px;
+      top: 8px;
+      bottom: 8px;
+      width: 1.5px;
+      background: linear-gradient(to bottom, var(--sage), var(--divider));
+    }
+
+    /* ══ MEAL CARD ══ */
+    .meal {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 0 28px;
+      margin-bottom: 48px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    /* stagger */
+    .meal:nth-child(1) { animation-delay: 0.1s; }
+    .meal:nth-child(2) { animation-delay: 0.2s; }
+    .meal:nth-child(3) { animation-delay: 0.3s; }
+    .meal:nth-child(4) { animation-delay: 0.4s; }
+    .meal:nth-child(5) { animation-delay: 0.5s; }
+    .meal:nth-child(6) { animation-delay: 0.6s; }
+
+    /* ── Time column ── */
+    .meal-time-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 4px;
+      gap: 6px;
+    }
+    .meal-dot {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--forest);
+      border: 3px solid var(--cream);
+      outline: 2px solid var(--sage);
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    .meal-clock {
+      font-family: "Lora", serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--forest);
+      line-height: 1;
+      text-align: center;
+    }
+    .meal-clock-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mist);
+      text-align: center;
+    }
+
+    /* ── Content column ── */
+    .meal-content {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid var(--divider);
+      overflow: hidden;
+      box-shadow: 0 3px 20px rgba(44,95,63,0.06);
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .meal-content:hover {
+      box-shadow: 0 8px 32px rgba(44,95,63,0.12);
+      transform: translateY(-2px);
+    }
+
+    .meal-content-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--divider);
+      background: linear-gradient(to right, #f6f0e8, #faf6ef);
+    }
+    .meal-name-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .meal-emoji {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .meal-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: 0.01em;
+    }
+    .meal-kcal-badge {
+      font-family: "Lora", serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--ember);
+      background: rgba(212,98,58,0.08);
+      border: 1px solid rgba(212,98,58,0.2);
+      border-radius: 999px;
+      padding: 3px 14px;
+      white-space: nowrap;
+    }
+
+    /* ── Table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead th {
+      background: #f8f4ee;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mist);
+      padding: 10px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--divider);
+    }
+    tbody tr {
+      border-bottom: 1px solid #f3ede2;
+      transition: background 0.15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #fdf9f4; }
+
+    td {
+      padding: 13px 20px;
+      vertical-align: middle;
+    }
+    td:first-child {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .kcal-cell {
+      font-family: "Lora", serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ember);
+      white-space: nowrap;
+    }
+    .sub-cell {
+      font-size: 0.88rem;
+    }
+    .sub-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #fef8e7;
+      border: 1px solid #e8c97a;
+      color: var(--bark);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.88rem;
+    }
+    .sub-tag::before {
+      content: "↔";
+      font-size: 0.75rem;
+      color: var(--gold);
+    }
+
+    /* ── Snack row ── */
+    .snack-body {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 20px 22px;
+    }
+    .snack-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f3ede2;
+      border: 1px solid var(--divider);
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 1rem;
+      color: var(--ink);
+      font-weight: 500;
+    }
+    .snack-pill .pill-kcal {
+      font-family: "Lora", serif;
+      font-size: 0.85rem;
+      color: var(--ember);
+      font-weight: 600;
+    }
+
+    /* ══ FOOTER ══ */
+    .footer-note {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 0.78rem;
+      color: var(--mist);
+      letter-spacing: 0.05em;
+      line-height: 2;
+    }
+
+    /* ══ ANIMATIONS ══ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 580px) {
+      html { font-size: 16px; }
+      .hero h1 { font-size: 2.2rem; }
+      .timeline::before { left: 46px; }
+      .meal { grid-template-columns: 76px 1fr; gap: 0 16px; }
+      .meal-clock { font-size: 1.15rem; }
+      thead th, td { padding: 10px 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="page">
+
+    <!-- ── HERO ── -->
+    <header class="hero">
+      <div class="hero-eyebrow">每日饮食方案</div>
+      <h1>健康饮食计划</h1>
+      <p class="hero-sub">均衡营养 · 低卡轻食 · 每餐皆可替换</p>
+      <div class="kcal-display">
+        <span class="num">1478</span>
+        <span class="label">千卡 / 天</span>
+      </div>
+
+      <!-- calorie distribution bar -->
+      <div style="margin-top:40px;">
+        <div class="kcal-bar-wrap">
+          <div class="kcal-bar-seg" style="width:25.1%;  background:#2c5f3f;"></div><!-- 早餐 371 -->
+          <div class="kcal-bar-seg" style="width:13.5%;  background:#7aab8a;"></div><!-- 上午加餐 200 -->
+          <div class="kcal-bar-seg" style="width:25.1%;  background:#4a8a62;"></div><!-- 午餐 371 -->
+          <div class="kcal-bar-seg" style="width:12.2%;  background:#c9963a;"></div><!-- 下午加餐 180 -->
+          <div class="kcal-bar-seg" style="width:21.7%;  background:#d4623a;"></div><!-- 晚餐 321 -->
+          <div class="kcal-bar-seg" style="width:2.4%;   background:#e8c97a;"></div><!-- 夜宵 35 -->
+        </div>
+        <div class="bar-labels">
+          <span class="bar-label"><span class="bar-dot" style="background:#2c5f3f;"></span>早餐 371</span>
+          <span class="bar-label"><span class="bar-dot" style="background:#7aab8a;"></span>上午 200</span>
+          <span class="bar-label"><span class="bar-dot" style="background:#4a8a62;"></span>午餐 371</span>
+          <span class="bar-label"><span class="bar-dot" style="background:#c9963a;"></span>下午 180</span>
+          <span class="bar-label"><span class="bar-dot" style="background:#d4623a;"></span>晚餐 321</span>
+          <span class="bar-label"><span class="bar-dot" style="background:#e8c97a;"></span>夜宵 35</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── TIMELINE ── -->
+    <div class="timeline">
+
+      <!-- 07:00 早餐 -->
+      <div class="meal">
+        <div class="meal-time-col">
+          <div class="meal-dot"></div>
+          <div class="meal-clock">07</div>
+          <div class="meal-clock-label">早晨</div>
+        </div>
+        <div class="meal-content">
+          <div class="meal-content-header">
+            <div class="meal-name-wrap">
+              <span class="meal-emoji">🌅</span>
+              <span class="meal-name">早餐</span>
+            </div>
+            <span class="meal-kcal-badge">371 千卡</span>
+          </div>
+          <table>
+            <thead><tr><th>食物</th><th>热量</th><th>替代选项</th></tr></thead>
+            <tbody>
+              <tr><td>蓝莓 100g</td><td class="kcal-cell">57</td><td class="sub-cell"><span class="sub-tag">草莓 100g</span></td></tr>
+              <tr><td>全麦面包 2片（56g）</td><td class="kcal-cell">140</td><td class="sub-cell"><span class="sub-tag">燕麦粥 100g</span></td></tr>
+              <tr><td>煮鸡蛋 1个</td><td class="kcal-cell">80</td><td class="sub-cell"><span class="sub-tag">蛋白 3个</span></td></tr>
+              <tr><td>南瓜子 16g</td><td class="kcal-cell">94</td><td class="sub-cell"><span class="sub-tag">杏仁 12g</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 09:00 上午加餐 -->
+      <div class="meal">
+        <div class="meal-time-col">
+          <div class="meal-dot" style="background:var(--sage);"></div>
+          <div class="meal-clock">09</div>
+          <div class="meal-clock-label">上午</div>
+        </div>
+        <div class="meal-content">
+          <div class="meal-content-header">
+            <div class="meal-name-wrap">
+              <span class="meal-emoji">🥛</span>
+              <span class="meal-name">上午加餐</span>
+            </div>
+            <span class="meal-kcal-badge">200 千卡</span>
+          </div>
+          <div class="snack-body">
+            <div class="snack-pill">低脂牛奶 1杯<span class="pill-kcal">85千卡</span></div>
+            <div class="snack-pill">小红薯 1个 100g<span class="pill-kcal">115千卡</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12:00 午餐 -->
+      <div class="meal">
+        <div class="meal-time-col">
+          <div class="meal-dot"></div>
+          <div class="meal-clock">12</div>
+          <div class="meal-clock-label">中午</div>
+        </div>
+        <div class="meal-content">
+          <div class="meal-content-header">
+            <div class="meal-name-wrap">
+              <span class="meal-emoji">☀️</span>
+              <span class="meal-name">午餐</span>
+            </div>
+            <span class="meal-kcal-badge">371 千卡</span>
+          </div>
+          <table>
+            <thead><tr><th>食物</th><th>热量</th><th>替代选项</th></tr></thead>
+            <tbody>
+              <tr><td>藜麦（熟）150g</td><td class="kcal-cell">180</td><td class="sub-cell"><span class="sub-tag">糙米饭 50g</span></td></tr>
+              <tr><td>瘦牛肉 95g</td><td class="kcal-cell">136</td><td class="sub-cell"><span class="sub-tag">鸡胸肉 100g</span></td></tr>
+              <tr><td>彩椒 80g</td><td class="kcal-cell">25</td><td class="sub-cell"><span class="sub-tag">西葫芦 80g</span></td></tr>
+              <tr><td>洋葱 75g</td><td class="kcal-cell">30</td><td class="sub-cell"><span class="sub-tag">蒜苗 75g</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 15:00 下午加餐 -->
+      <div class="meal">
+        <div class="meal-time-col">
+          <div class="meal-dot" style="background:var(--gold);outline-color:var(--gold);"></div>
+          <div class="meal-clock">15</div>
+          <div class="meal-clock-label">下午</div>
+        </div>
+        <div class="meal-content">
+          <div class="meal-content-header">
+            <div class="meal-name-wrap">
+              <span class="meal-emoji">🍊</span>
+              <span class="meal-name">下午加餐</span>
+            </div>
+            <span class="meal-kcal-badge">180 千卡</span>
+          </div>
+          <div class="snack-body">
+            <div class="snack-pill">原味酸奶 1杯<span class="pill-kcal">75千卡</span></div>
+            <div class="snack-pill">橘子 1个（或葡萄 10颗）</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 18:00 晚餐 -->
+      <div class="meal">
+        <div class="meal-time-col">
+          <div class="meal-dot" style="background:var(--ember);outline-color:var(--ember);"></div>
+          <div class="meal-clock">18</div>
+          <div class="meal-clock-label">傍晚</div>
+        </div>
+        <div class="meal-content">
+          <div class="meal-content-header">
+            <div class="meal-name-wrap">
+              <span class="meal-emoji">🌿</span>
+              <span class="meal-name">晚餐</span>
+            </div>
+            <span class="meal-kcal-badge">321 千卡</span>
+          </div>
+          <table>
+            <thead><tr><th>食物</th><th>热量</th><th>替代选项</th></tr></thead>
+            <tbody>
+              <tr><td>小红薯 1个（100g）</td><td class="kcal-cell">115</td><td class="sub-cell"><span class="sub-tag">糙米 30g</span></td></tr>
+              <tr><td>糙米饭 20g</td><td class="kcal-cell">90</td><td class="sub-cell"><span class="sub-tag">香蕉 50g</span></td></tr>
+              <tr><td>鸡胸肉 半块（50g）</td><td class="kcal-cell">82</td><td class="sub-cell"><span class="sub-tag">水煮蛋蛋白 3个</span></td></tr>
+              <tr><td>西兰花 50g</td><td class="kcal-cell">14</td><td class="sub-cell"><span class="sub-tag">芦笋 50g</span></td></tr>
+              <tr><td>彩椒 50g</td><td class="kcal-cell">15</td><td class="sub-cell"><span class="sub-tag">生菜 50g</span></td></tr>
+              <tr><td>圣女果 5颗</td><td class="kcal-cell">5</td><td class="sub-cell"><span class="sub-tag">黄瓜 100g</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 21:00 夜宵 -->
+      <div class="meal">
+        <div class="meal-time-col">
+          <div class="meal-dot" style="background:#94a3b8;outline-color:#cbd5e1;"></div>
+          <div class="meal-clock">21</div>
+          <div class="meal-clock-label">夜间</div>
+        </div>
+        <div class="meal-content">
+          <div class="meal-content-header">
+            <div class="meal-name-wrap">
+              <span class="meal-emoji">🌙</span>
+              <span class="meal-name">夜宵（低卡蔬菜）</span>
+            </div>
+            <span class="meal-kcal-badge">35 千卡</span>
+          </div>
+          <div class="snack-body">
+            <div class="snack-pill">西兰花 50g</div>
+            <div class="snack-pill">生菜 50g</div>
+            <div class="snack-pill">圣女果 5颗</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /timeline -->
+
+    <footer class="footer-note">
+      每日总热量 <strong>1478 千卡</strong> &nbsp;·&nbsp; ↔ 标签为可替换食品
+      <br>请依据个人身体状况、活动量酌情调整，必要时咨询营养师
+    </footer>
+
+  </div><!-- /page -->
+</body>
+</html>
