@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>每日热量规划</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream:   #faf6ef;
+      --paper:   #f3ede2;
+      --forest:  #2c5f3f;
+      --sage:    #7aab8a;
+      --bark:    #8b5e3c;
+      --ember:   #d4623a;
+      --gold:    #c9963a;
+      --sky:     #4a8fa8;
+      --ink:     #1c1812;
+      --mist:    #6b6358;
+      --div:     #dfd8cc;
+      --ok:      #2c7a4b;
+      --warn:    #c9963a;
+      --over:    #c0392b;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 17px; }
+    body {
+      font-family: "Noto Serif SC", "Songti SC", Georgia, serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 40px 20px 80px;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.7;
+    }
+    .page { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; }
+
+    /* ── HEADER ── */
+    .header { text-align: center; margin-bottom: 40px; animation: fadeUp .5s ease both; }
+    .header h1 { font-size: 2.4rem; font-weight: 700; color: var(--forest); letter-spacing: -.01em; }
+    .header p  { color: var(--mist); font-size: .9rem; margin-top: 6px; font-style: italic; }
+
+    /* ── TARGET SETTER ── */
+    .target-card {
+      background: var(--forest);
+      color: #fff;
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      animation: fadeUp .5s .1s ease both;
+    }
+    .target-left { flex: 1; min-width: 180px; }
+    .target-label { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; opacity: .7; margin-bottom: 6px; }
+    .target-input-row { display: flex; align-items: center; gap: 10px; }
+    .target-input {
+      font-family: "Lora", serif;
+      font-size: 2.4rem; font-weight: 600;
+      background: rgba(255,255,255,.12);
+      border: 1.5px solid rgba(255,255,255,.25);
+      border-radius: 8px;
+      color: #fff;
+      width: 130px; padding: 6px 12px;
+      text-align: center;
+    }
+    .target-input:focus { outline: none; border-color: rgba(255,255,255,.6); background: rgba(255,255,255,.18); }
+    .target-unit { font-size: 1rem; opacity: .8; }
+    .target-right { flex: 2; min-width: 240px; }
+    .bar-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: .82rem; }
+    .bar-track {
+      background: rgba(255,255,255,.18);
+      border-radius: 999px; height: 14px; overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, #a8d5b0, #f2d57e);
+      transition: width .4s ease, background .4s;
+      min-width: 2px;
+    }
+    .bar-fill.warn  { background: linear-gradient(90deg, #f2d57e, #e8924a); }
+    .bar-fill.over  { background: linear-gradient(90deg, #e8924a, #c0392b); }
+    .bar-stats { display: flex; gap: 20px; margin-top: 12px; flex-wrap: wrap; }
+    .bar-stat { font-size: .78rem; opacity: .8; }
+    .bar-stat strong { font-size: 1.1rem; font-family: "Lora", serif; opacity: 1; }
+
+    /* ── MEAL RATIO PILLS ── */
+    .ratio-row {
+      display: flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap;
+      animation: fadeUp .5s .15s ease both;
+    }
+    .ratio-pill {
+      background: #fff; border: 1.5px solid var(--div);
+      border-radius: 999px; padding: 6px 16px;
+      font-size: .8rem; color: var(--mist);
+      cursor: pointer; transition: all .15s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .ratio-pill:hover, .ratio-pill.active {
+      border-color: var(--forest); background: var(--forest); color: #fff;
+    }
+    .ratio-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    /* ── MEALS GRID ── */
+    .meals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 620px) { .meals-grid { grid-template-columns: 1fr; } }
+
+    /* ── MEAL CARD ── */
+    .meal-card {
+      background: #fff;
+      border: 1.5px solid var(--div);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(44,95,63,.05);
+      display: flex; flex-direction: column;
+      animation: fadeUp .5s ease both;
+    }
+    .meal-card:nth-child(1) { animation-delay: .2s; }
+    .meal-card:nth-child(2) { animation-delay: .28s; }
+    .meal-card:nth-child(3) { animation-delay: .36s; }
+    .meal-card:nth-child(4) { animation-delay: .44s; }
+
+    .meal-card-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px;
+      background: linear-gradient(to right, #f6f0e8, #faf6ef);
+      border-bottom: 1px solid var(--div);
+    }
+    .meal-title { display: flex; align-items: center; gap: 10px; }
+    .meal-emoji { font-size: 1.4rem; }
+    .meal-name  { font-size: 1rem; font-weight: 700; color: var(--ink); }
+    .meal-target-label { font-size: .72rem; color: var(--mist); margin-top: 2px; }
+    .meal-total {
+      font-family: "Lora", serif; font-size: 1.15rem; font-weight: 600;
+      color: var(--ok); transition: color .3s;
+    }
+    .meal-total.warn { color: var(--warn); }
+    .meal-total.over { color: var(--over); }
+
+    /* mini bar */
+    .meal-mini-bar { height: 4px; background: #f0ebe2; }
+    .meal-mini-fill { height: 100%; background: var(--sage); transition: width .4s, background .4s; }
+    .meal-mini-fill.warn { background: var(--gold); }
+    .meal-mini-fill.over { background: var(--ember); }
+
+    /* food list */
+    .food-list { flex: 1; padding: 0; }
+    .food-item {
+      display: grid;
+      grid-template-columns: 1fr 90px 52px 28px;
+      align-items: center; gap: 6px;
+      padding: 10px 16px;
+      border-bottom: 1px solid #f6f0e8;
+      font-size: .88rem;
+    }
+    .food-item:last-child { border-bottom: none; }
+    .food-item-name { color: var(--ink); font-weight: 500; }
+    .food-item-g-wrap {
+      display: flex; align-items: center; gap: 3px;
+    }
+    .food-item-g {
+      font-size: .82rem; color: var(--mist);
+      background: var(--paper); border: 1px solid var(--div);
+      border-radius: 6px; padding: 3px 6px;
+      width: 56px; text-align: center;
+      font-family: "Lora", serif;
+    }
+    .food-item-g-unit {
+      font-size: .75rem; color: var(--mist); white-space: nowrap;
+    }
+    .food-item-g:focus { outline: none; border-color: var(--sage); }
+    .food-item-kcal { font-family: "Lora", serif; font-size: .9rem; color: var(--ember); text-align: right; }
+    .food-del {
+      background: none; border: none; cursor: pointer;
+      color: #ccc; font-size: 1rem; padding: 2px 4px;
+      border-radius: 4px; transition: color .15s;
+    }
+    .food-del:hover { color: var(--over); }
+    .food-empty { padding: 18px 16px; font-size: .82rem; color: var(--mist); font-style: italic; text-align: center; }
+
+    /* add food area */
+    .add-area { padding: 12px 14px; border-top: 1px dashed var(--div); background: #fdfaf5; }
+    .add-row { display: flex; gap: 6px; align-items: center; }
+    .search-wrap { position: relative; flex: 1; }
+    .food-search {
+      width: 100%; padding: 8px 12px; font-size: .85rem;
+      font-family: "Noto Serif SC", serif;
+      border: 1.5px solid var(--div); border-radius: 8px;
+      background: #fff; color: var(--ink);
+    }
+    .food-search:focus { outline: none; border-color: var(--sage); }
+    .autocomplete {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: #fff; border: 1.5px solid var(--div); border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.1);
+      z-index: 100; max-height: 220px; overflow-y: auto;
+    }
+    .ac-item {
+      padding: 9px 14px; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: .85rem; transition: background .12s;
+    }
+    .ac-item:hover, .ac-item.focused { background: #f3ede2; }
+    .ac-kcal { color: var(--ember); font-family: "Lora", serif; font-size: .82rem; }
+    .ac-divider { padding: 4px 14px; font-size: .7rem; color: var(--mist); letter-spacing: .1em; text-transform: uppercase; background: #faf6ef; }
+    .gram-wrap {
+      display: flex; align-items: center; gap: 3px;
+    }
+    .gram-input {
+      width: 56px; padding: 8px 6px; text-align: center;
+      font-size: .85rem; font-family: "Lora", serif;
+      border: 1.5px solid var(--div); border-radius: 8px;
+      background: #fff; color: var(--ink);
+    }
+    .gram-input:focus { outline: none; border-color: var(--sage); }
+    .gram-unit { font-size: .78rem; color: var(--mist); white-space: nowrap; }
+    .add-btn {
+      padding: 8px 14px; background: var(--forest); color: #fff;
+      border: none; border-radius: 8px; cursor: pointer;
+      font-size: .82rem; font-family: "Noto Serif SC", serif;
+      transition: background .15s; white-space: nowrap;
+    }
+    .add-btn:hover { background: #1e4530; }
+
+    /* custom food kcal field */
+    .custom-kcal-row { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
+    .custom-kcal-input {
+      flex: 1; padding: 7px 10px; font-size: .83rem;
+      border: 1.5px solid #f0c060; border-radius: 8px;
+      background: #fffbf0; font-family: "Lora", serif;
+    }
+    .custom-kcal-input:focus { outline: none; border-color: var(--gold); }
+    .custom-label { font-size: .75rem; color: var(--bark); white-space: nowrap; }
+    .custom-add-btn {
+      padding: 7px 12px; background: var(--gold); color: #fff;
+      border: none; border-radius: 8px; cursor: pointer;
+      font-size: .8rem; font-family: "Noto Serif SC", serif;
+    }
+
+    /* ── SUMMARY ── */
+    .summary {
+      background: #fff; border: 1.5px solid var(--div); border-radius: 14px;
+      padding: 22px 28px;
+      animation: fadeUp .5s .5s ease both;
+    }
+    .summary-title { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--mist); margin-bottom: 16px; }
+    .summary-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #f3ede2; }
+    .summary-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .summary-meal { display: flex; align-items: center; gap: 8px; font-size: .92rem; }
+    .s-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .summary-val { font-family: "Lora", serif; font-size: 1rem; font-weight: 600; color: var(--ink); }
+    .summary-pct { font-size: .75rem; color: var(--mist); margin-left: 6px; }
+    .summary-remaining {
+      margin-top: 18px; padding: 14px 18px;
+      border-radius: 10px; text-align: center;
+      font-size: .92rem; font-weight: 600;
+      transition: background .4s, color .4s;
+    }
+    .summary-remaining.ok   { background: #e8f5ed; color: var(--ok); }
+    .summary-remaining.warn { background: #fef8e7; color: var(--warn); }
+    .summary-remaining.over { background: #fdecea; color: var(--over); }
+
+    /* ── RESET ── */
+    .footer-actions { text-align: center; margin-top: 24px; animation: fadeUp .5s .6s ease both; }
+    .reset-btn {
+      background: none; border: 1.5px solid var(--div); border-radius: 999px;
+      color: var(--mist); padding: 8px 24px; cursor: pointer;
+      font-size: .82rem; font-family: "Noto Serif SC", serif;
+      transition: all .15s;
+    }
+    .reset-btn:hover { border-color: var(--ember); color: var(--ember); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <h1>今日热量规划</h1>
+    <p>设定目标 · 填入食物 · 实时追踪</p>
+  </div>
+
+  <!-- TARGET CARD -->
+  <div class="target-card" id="targetCard">
+    <div class="target-left">
+      <div class="target-label">每日热量目标</div>
+      <div class="target-input-row">
+        <input class="target-input" type="number" id="targetInput" value="1478" min="500" max="5000" />
+        <span class="target-unit">千卡</span>
+      </div>
+    </div>
+    <div class="target-right">
+      <div class="bar-row">
+        <span id="consumedLabel">已摄入 <strong>0</strong> 千卡</span>
+        <span id="remainLabel">剩余 <strong>1478</strong> 千卡</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="mainBarFill" style="width:0%"></div></div>
+      <div class="bar-stats">
+        <span class="bar-stat">早餐 <strong id="s0">0</strong></span>
+        <span class="bar-stat">午餐 <strong id="s1">0</strong></span>
+        <span class="bar-stat">晚餐 <strong id="s2">0</strong></span>
+        <span class="bar-stat">加餐 <strong id="s3">0</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEAL CARDS -->
+  <div class="meals-grid" id="mealsGrid"></div>
+
+  <!-- SUMMARY -->
+  <div class="summary">
+    <div class="summary-title">每日摘要</div>
+    <div id="summaryRows"></div>
+    <div class="summary-remaining ok" id="summaryRemaining">尚未添加任何食物</div>
+  </div>
+
+  <div class="footer-actions">
+    <button class="reset-btn" onclick="resetAll()">清空今日记录</button>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════
+//  FOOD DATABASE  (kcal per 100g)
+// ══════════════════════════════════════
+const FOOD_DB = [
+  // 水果
+  { name: "蓝莓",       kcal100: 57,  defaultG: 100, cat: "水果" },
+  { name: "草莓",       kcal100: 32,  defaultG: 100, cat: "水果" },
+  { name: "苹果",       kcal100: 52,  defaultG: 150, cat: "水果" },
+  { name: "香蕉",       kcal100: 89,  defaultG: 100, cat: "水果" },
+  { name: "橙子",       kcal100: 47,  defaultG: 150, cat: "水果" },
+  { name: "葡萄",       kcal100: 67,  defaultG: 100, cat: "水果" },
+  { name: "西瓜",       kcal100: 30,  defaultG: 200, cat: "水果" },
+  { name: "橘子",       kcal100: 44,  defaultG: 100, cat: "水果" },
+  { name: "火龙果",     kcal100: 55,  defaultG: 150, cat: "水果" },
+  // 主食
+  { name: "糙米饭",     kcal100: 111, defaultG: 100, cat: "主食" },
+  { name: "白米饭",     kcal100: 130, defaultG: 100, cat: "主食" },
+  { name: "全麦面包",   kcal100: 250, defaultG: 56,  cat: "主食" },
+  { name: "燕麦",       kcal100: 389, defaultG: 40,  cat: "主食" },
+  { name: "藜麦（熟）", kcal100: 120, defaultG: 150, cat: "主食" },
+  { name: "小红薯",     kcal100: 86,  defaultG: 100, cat: "主食" },
+  { name: "紫薯",       kcal100: 90,  defaultG: 100, cat: "主食" },
+  { name: "玉米",       kcal100: 86,  defaultG: 100, cat: "主食" },
+  // 蛋白质
+  { name: "鸡胸肉",     kcal100: 165, defaultG: 100, cat: "蛋白质" },
+  { name: "瘦牛肉",     kcal100: 143, defaultG: 100, cat: "蛋白质" },
+  { name: "三文鱼",     kcal100: 208, defaultG: 100, cat: "蛋白质" },
+  { name: "虾",         kcal100: 99,  defaultG: 100, cat: "蛋白质" },
+  { name: "鸡蛋",       kcal100: 155, defaultG: 50,  cat: "蛋白质" },
+  { name: "鸡蛋白",     kcal100: 52,  defaultG: 90,  cat: "蛋白质" },
+  { name: "豆腐",       kcal100: 76,  defaultG: 150, cat: "蛋白质" },
+  // 蔬菜
+  { name: "西兰花",     kcal100: 34,  defaultG: 100, cat: "蔬菜" },
+  { name: "彩椒",       kcal100: 31,  defaultG: 80,  cat: "蔬菜" },
+  { name: "洋葱",       kcal100: 40,  defaultG: 75,  cat: "蔬菜" },
+  { name: "生菜",       kcal100: 15,  defaultG: 100, cat: "蔬菜" },
+  { name: "黄瓜",       kcal100: 16,  defaultG: 100, cat: "蔬菜" },
+  { name: "番茄",       kcal100: 18,  defaultG: 100, cat: "蔬菜" },
+  { name: "圣女果",     kcal100: 18,  defaultG: 50,  cat: "蔬菜" },
+  { name: "芦笋",       kcal100: 20,  defaultG: 100, cat: "蔬菜" },
+  { name: "菠菜",       kcal100: 23,  defaultG: 100, cat: "蔬菜" },
+  { name: "西葫芦",     kcal100: 17,  defaultG: 100, cat: "蔬菜" },
+  { name: "蒜苗",       kcal100: 37,  defaultG: 75,  cat: "蔬菜" },
+  // 乳制品 / 饮料
+  { name: "低脂牛奶",   kcal100: 42,  defaultG: 240, cat: "乳制品" },
+  { name: "全脂牛奶",   kcal100: 61,  defaultG: 240, cat: "乳制品" },
+  { name: "原味酸奶",   kcal100: 63,  defaultG: 150, cat: "乳制品" },
+  { name: "希腊酸奶",   kcal100: 97,  defaultG: 150, cat: "乳制品" },
+  // 坚果 / 种子
+  { name: "南瓜子",     kcal100: 559, defaultG: 16,  cat: "坚果" },
+  { name: "杏仁",       kcal100: 579, defaultG: 15,  cat: "坚果" },
+  { name: "核桃",       kcal100: 654, defaultG: 15,  cat: "坚果" },
+  { name: "花生",       kcal100: 567, defaultG: 20,  cat: "坚果" },
+];
+
+const MEALS = [
+  { id: "breakfast", emoji: "🌅", name: "早餐", time: "07:00", color: "#2c5f3f", ratio: 0.25 },
+  { id: "lunch",     emoji: "☀️", name: "午餐", time: "12:00", color: "#4a8a62", ratio: 0.35 },
+  { id: "dinner",    emoji: "🌿", name: "晚餐", time: "18:00", color: "#d4623a", ratio: 0.30 },
+  { id: "snack",     emoji: "🍊", name: "加餐", time: "09/15/21", color: "#c9963a", ratio: 0.10 },
+];
+
+// ── State ──
+let state = {
+  target: 1478,
+  meals: { breakfast: [], lunch: [], dinner: [], snack: [] },
+};
+
+// localStorage persistence
+function save() {
+  localStorage.setItem("kcal_planner", JSON.stringify(state));
+}
+function load() {
+  try {
+    const s = localStorage.getItem("kcal_planner");
+    if (s) state = JSON.parse(s);
+  } catch(e) {}
+}
+
+// ── Calc ──
+function mealTotal(mealId) {
+  return state.meals[mealId].reduce((s, f) => s + f.kcal, 0);
+}
+function dayTotal() {
+  return MEALS.reduce((s, m) => s + mealTotal(m.id), 0);
+}
+function mealTarget(m) {
+  return Math.round(state.target * m.ratio);
+}
+
+// ── Render ──
+function render() {
+  renderMeals();
+  renderTopBar();
+  renderSummary();
+  save();
+}
+
+function renderTopBar() {
+  const total = dayTotal();
+  const pct = Math.min(100, (total / state.target) * 100);
+  const fill = document.getElementById("mainBarFill");
+  fill.style.width = pct + "%";
+  fill.className = "bar-fill" + (pct > 100 ? " over" : pct > 85 ? " warn" : "");
+  document.getElementById("consumedLabel").innerHTML =
+    `已摄入 <strong>${total}</strong> 千卡`;
+  const rem = state.target - total;
+  document.getElementById("remainLabel").innerHTML =
+    rem >= 0 ? `剩余 <strong>${rem}</strong> 千卡` : `超出 <strong>${-rem}</strong> 千卡`;
+  MEALS.forEach((m, i) => {
+    document.getElementById("s" + i).textContent = mealTotal(m.id);
+  });
+  document.getElementById("targetInput").value = state.target;
+}
+
+function renderMeals() {
+  const grid = document.getElementById("mealsGrid");
+  grid.innerHTML = "";
+  MEALS.forEach(m => {
+    const total = mealTotal(m.id);
+    const target = mealTarget(m);
+    const pct = Math.min(100, (total / Math.max(target, 1)) * 100);
+    const status = total > target * 1.15 ? "over" : total > target * 0.9 ? "warn" : "";
+
+    const card = document.createElement("div");
+    card.className = "meal-card";
+    card.innerHTML = `
+      <div class="meal-card-head">
+        <div class="meal-title">
+          <span class="meal-emoji">${m.emoji}</span>
+          <div>
+            <div class="meal-name">${m.name}</div>
+            <div class="meal-target-label">目标 ~${target} 千卡</div>
+          </div>
+        </div>
+        <div class="meal-total ${status}">${total} <span style="font-size:.7rem;font-weight:400;opacity:.7">千卡</span></div>
+      </div>
+      <div class="meal-mini-bar">
+        <div class="meal-mini-fill ${status}" style="width:${pct}%"></div>
+      </div>
+      <div class="food-list" id="list-${m.id}">
+        ${renderFoodList(m.id)}
+      </div>
+      <div class="add-area">
+        <div class="add-row">
+          <div class="search-wrap">
+            <input class="food-search" id="search-${m.id}" placeholder="搜索或输入食物…" autocomplete="off"
+              oninput="onSearch(event,'${m.id}')"
+              onkeydown="onSearchKey(event,'${m.id}')"
+              onfocus="onSearch(event,'${m.id}')" />
+            <div class="autocomplete" id="ac-${m.id}" style="display:none"></div>
+          </div>
+          <div class="gram-wrap">
+            <input class="gram-input" id="gram-${m.id}" type="number" value="100" min="1" max="2000" />
+            <span class="gram-unit">克</span>
+          </div>
+          <button class="add-btn" onclick="addCustom('${m.id}')">添加</button>
+        </div>
+        <div id="custom-kcal-row-${m.id}" style="display:none" class="custom-kcal-row">
+          <span class="custom-label">自定义热量：</span>
+          <input class="custom-kcal-input" id="custom-kcal-${m.id}" type="number" placeholder="千卡 / 100g" min="0" max="900" />
+          <button class="custom-add-btn" onclick="addCustomConfirm('${m.id}')">确认添加</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // close autocomplete on outside click
+  document.addEventListener("click", e => {
+    MEALS.forEach(m => {
+      const ac = document.getElementById("ac-" + m.id);
+      if (ac && !ac.contains(e.target) && e.target.id !== "search-" + m.id) {
+        ac.style.display = "none";
+      }
+    });
+  }, { once: false });
+}
+
+function renderFoodList(mealId) {
+  const items = state.meals[mealId];
+  if (!items.length) return `<div class="food-empty">尚未添加食物</div>`;
+  return items.map((f, i) => `
+    <div class="food-item">
+      <span class="food-item-name">${f.name}</span>
+      <div class="food-item-g-wrap">
+        <input class="food-item-g" type="number" value="${f.grams}" min="1" max="2000"
+          onchange="updateGrams('${mealId}',${i},this.value)" />
+        <span class="food-item-g-unit">克</span>
+      </div>
+      <span class="food-item-kcal">${f.kcal}</span>
+      <button class="food-del" onclick="removeFood('${mealId}',${i})" title="删除">×</button>
+    </div>
+  `).join("");
+}
+
+// ── Autocomplete ──
+let acSelected = {};  // mealId → index
+let acItems = {};     // mealId → matching items + "custom" option
+
+function onSearch(e, mealId) {
+  const q = e.target.value.trim();
+  const ac = document.getElementById("ac-" + mealId);
+  acSelected[mealId] = -1;
+
+  // hide custom row when typing new search
+  document.getElementById("custom-kcal-row-" + mealId).style.display = "none";
+
+  if (!q) { ac.style.display = "none"; return; }
+
+  const matches = FOOD_DB.filter(f => f.name.includes(q) || q.includes(f.name.slice(0,2)));
+  acItems[mealId] = [...matches];
+
+  let html = "";
+  // group by category
+  const cats = [...new Set(matches.map(f => f.cat))];
+  cats.forEach(cat => {
+    const inCat = matches.filter(f => f.cat === cat);
+    html += `<div class="ac-divider">${cat}</div>`;
+    inCat.forEach(f => {
+      const grams = parseInt(document.getElementById("gram-" + mealId).value) || f.defaultG;
+      const kcal = Math.round(f.kcal100 * grams / 100);
+      html += `<div class="ac-item" data-name="${f.name}" data-kcal100="${f.kcal100}"
+        onmousedown="selectAcItem(event,'${mealId}','${f.name}',${f.kcal100})">
+        <span>${f.name}</span>
+        <span class="ac-kcal">${kcal}千卡 / ${grams}g</span>
+      </div>`;
+    });
+  });
+
+  // always show "自定义" option
+  html += `<div class="ac-divider">自定义</div>
+    <div class="ac-item" onmousedown="showCustom(event,'${mealId}')">
+      <span>「${q}」— 自定义热量</span>
+      <span class="ac-kcal">手动输入</span>
+    </div>`;
+
+  ac.innerHTML = html;
+  ac.style.display = "block";
+}
+
+function onSearchKey(e, mealId) {
+  const ac = document.getElementById("ac-" + mealId);
+  if (ac.style.display === "none") return;
+  const items = ac.querySelectorAll(".ac-item");
+  if (!items.length) return;
+  let idx = acSelected[mealId] ?? -1;
+  if (e.key === "ArrowDown") { e.preventDefault(); idx = Math.min(idx + 1, items.length - 1); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); idx = Math.max(idx - 1, 0); }
+  else if (e.key === "Enter") { e.preventDefault(); if (idx >= 0) items[idx].dispatchEvent(new MouseEvent("mousedown")); return; }
+  else if (e.key === "Escape") { ac.style.display = "none"; return; }
+  items.forEach((el, i) => el.classList.toggle("focused", i === idx));
+  acSelected[mealId] = idx;
+}
+
+function selectAcItem(e, mealId, name, kcal100) {
+  e.preventDefault();
+  document.getElementById("search-" + mealId).value = name;
+  document.getElementById("ac-" + mealId).style.display = "none";
+  // store pending
+  document.getElementById("search-" + mealId).dataset.kcal100 = kcal100;
+  document.getElementById("custom-kcal-row-" + mealId).style.display = "none";
+}
+
+function showCustom(e, mealId) {
+  e.preventDefault();
+  document.getElementById("ac-" + mealId).style.display = "none";
+  document.getElementById("custom-kcal-row-" + mealId).style.display = "flex";
+  document.getElementById("custom-kcal-" + mealId).focus();
+}
+
+function addCustom(mealId) {
+  const searchEl = document.getElementById("search-" + mealId);
+  const name = searchEl.value.trim();
+  if (!name) return;
+
+  const grams = parseFloat(document.getElementById("gram-" + mealId).value) || 100;
+  const kcal100 = parseFloat(searchEl.dataset.kcal100 || 0);
+
+  // if we have kcal100 from DB match
+  if (kcal100 > 0) {
+    pushFood(mealId, name, grams, kcal100);
+    searchEl.value = "";
+    searchEl.dataset.kcal100 = "";
+    return;
+  }
+
+  // check DB by name
+  const dbMatch = FOOD_DB.find(f => f.name === name);
+  if (dbMatch) {
+    pushFood(mealId, name, grams, dbMatch.kcal100);
+    searchEl.value = "";
+    return;
+  }
+
+  // show custom kcal row
+  document.getElementById("custom-kcal-row-" + mealId).style.display = "flex";
+  document.getElementById("custom-kcal-" + mealId).focus();
+}
+
+function addCustomConfirm(mealId) {
+  const searchEl = document.getElementById("search-" + mealId);
+  const name = searchEl.value.trim() || "自定义食物";
+  const grams = parseFloat(document.getElementById("gram-" + mealId).value) || 100;
+  const kcal100 = parseFloat(document.getElementById("custom-kcal-" + mealId).value) || 0;
+  if (!kcal100) { document.getElementById("custom-kcal-" + mealId).focus(); return; }
+  pushFood(mealId, name, grams, kcal100);
+  searchEl.value = "";
+  searchEl.dataset.kcal100 = "";
+  document.getElementById("custom-kcal-row-" + mealId).style.display = "none";
+  document.getElementById("custom-kcal-" + mealId).value = "";
+}
+
+function pushFood(mealId, name, grams, kcal100) {
+  const kcal = Math.round(kcal100 * grams / 100);
+  state.meals[mealId].push({ name, grams, kcal100, kcal });
+  render();
+}
+
+function removeFood(mealId, idx) {
+  state.meals[mealId].splice(idx, 1);
+  render();
+}
+
+function updateGrams(mealId, idx, val) {
+  const grams = parseFloat(val) || 0;
+  const f = state.meals[mealId][idx];
+  f.grams = grams;
+  f.kcal = Math.round(f.kcal100 * grams / 100);
+  renderTopBar();
+  renderSummary();
+  // update just this cell's kcal display
+  const cells = document.querySelectorAll(`#list-${mealId} .food-item-kcal`);
+  if (cells[idx]) cells[idx].textContent = f.kcal;
+  // update meal header total
+  const total = mealTotal(mealId);
+  const m = MEALS.find(x => x.id === mealId);
+  const target = mealTarget(m);
+  const status = total > target * 1.15 ? "over" : total > target * 0.9 ? "warn" : "";
+  const totalEl = document.querySelector(`#mealsGrid .meal-card:nth-child(${MEALS.findIndex(x=>x.id===mealId)+1}) .meal-total`);
+  if (totalEl) { totalEl.textContent = total + " "; totalEl.className = "meal-total " + status; }
+  save();
+}
+
+function renderSummary() {
+  const total = dayTotal();
+  const rows = document.getElementById("summaryRows");
+  rows.innerHTML = MEALS.map(m => {
+    const t = mealTotal(m.id);
+    const pct = total > 0 ? Math.round(t / total * 100) : 0;
+    return `<div class="summary-row">
+      <div class="summary-meal">
+        <span class="s-dot" style="background:${m.color}"></span>
+        ${m.emoji} ${m.name}
+      </div>
+      <div><span class="summary-val">${t}</span> <span class="summary-pct">千卡 ${total > 0 ? `(${pct}%)` : ""}</span></div>
+    </div>`;
+  }).join("") + `<div class="summary-row">
+    <div class="summary-meal"><span class="s-dot" style="background:#1c1812"></span>全天合计</div>
+    <div><span class="summary-val">${total}</span> <span class="summary-pct">/ ${state.target} 千卡</span></div>
+  </div>`;
+
+  const rem = state.target - total;
+  const remEl = document.getElementById("summaryRemaining");
+  if (total === 0) {
+    remEl.className = "summary-remaining ok";
+    remEl.textContent = "尚未添加任何食物";
+  } else if (rem > 0) {
+    const pct = Math.round(total / state.target * 100);
+    remEl.className = "summary-remaining " + (pct > 85 ? "warn" : "ok");
+    remEl.textContent = `还可以摄入 ${rem} 千卡（已达成 ${pct}%）`;
+  } else {
+    remEl.className = "summary-remaining over";
+    remEl.textContent = `今日已超出目标 ${-rem} 千卡`;
+  }
+}
+
+function resetAll() {
+  if (!confirm("确认清空今日所有记录？")) return;
+  state.meals = { breakfast: [], lunch: [], dinner: [], snack: [] };
+  render();
+}
+
+// target input
+document.getElementById("targetInput").addEventListener("change", e => {
+  state.target = parseInt(e.target.value) || 1478;
+  render();
+});
+document.getElementById("targetInput").addEventListener("input", e => {
+  state.target = parseInt(e.target.value) || 1478;
+  renderTopBar();
+  renderSummary();
+});
+
+// ── Init ──
+load();
+render();
+</script>
+</body>
+</html>
