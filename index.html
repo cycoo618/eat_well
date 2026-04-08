@@ -155,6 +155,12 @@
     .ac-item:hover, .ac-item.focused { background: #f3ede2; }
     .ac-kcal { color: var(--ember); font-family: "Lora", serif; font-size: .82rem; }
     .ac-divider { padding: 4px 14px; font-size: .7rem; color: var(--mist); letter-spacing: .1em; text-transform: uppercase; background: #faf6ef; }
+    .ac-divider.online { background: #f0f7ff; color: #4a8fa8; }
+    .ac-loading { padding: 10px 14px; font-size: .82rem; color: var(--mist); display: flex; align-items: center; gap: 8px; }
+    .ac-spinner { width: 14px; height: 14px; border: 2px solid var(--div); border-top-color: var(--sage); border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
+    .ac-online-badge { font-size: .68rem; background: #e8f4fb; color: #4a8fa8; border-radius: 4px; padding: 1px 6px; margin-left: 6px; }
+    .ac-multi-label { font-size: .72rem; color: var(--bark); margin-left: 4px; font-style: italic; }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .gram-wrap { display: flex; align-items: center; gap: 3px; }
     .gram-input { width: 56px; padding: 8px 6px; text-align: center; font-size: .85rem; font-family: "Lora", serif; border: 1.5px solid var(--div); border-radius: 8px; background: #fff; color: var(--ink); }
     .gram-input:focus { outline: none; border-color: var(--sage); }
@@ -332,6 +338,7 @@
 //  FOOD DATABASE
 // ══════════════════════════════════════
 const FOOD_DB = [
+  // 水果
   { name: "蓝莓",       kcal100: 57,  defaultG: 100, cat: "水果" },
   { name: "草莓",       kcal100: 32,  defaultG: 100, cat: "水果" },
   { name: "苹果",       kcal100: 52,  defaultG: 150, cat: "水果" },
@@ -341,21 +348,55 @@ const FOOD_DB = [
   { name: "西瓜",       kcal100: 30,  defaultG: 200, cat: "水果" },
   { name: "橘子",       kcal100: 44,  defaultG: 100, cat: "水果" },
   { name: "火龙果",     kcal100: 55,  defaultG: 150, cat: "水果" },
+  { name: "芒果",       kcal100: 60,  defaultG: 150, cat: "水果" },
+  { name: "猕猴桃",     kcal100: 61,  defaultG: 100, cat: "水果" },
+  { name: "梨",         kcal100: 57,  defaultG: 150, cat: "水果" },
+  { name: "桃子",       kcal100: 39,  defaultG: 150, cat: "水果" },
+  { name: "樱桃",       kcal100: 50,  defaultG: 100, cat: "水果" },
+  { name: "荔枝",       kcal100: 66,  defaultG: 100, cat: "水果" },
+  { name: "柚子",       kcal100: 38,  defaultG: 100, cat: "水果" },
+  { name: "菠萝",       kcal100: 50,  defaultG: 100, cat: "水果" },
+  { name: "柠檬",       kcal100: 29,  defaultG: 50,  cat: "水果" },
+  // 主食
   { name: "糙米饭",     kcal100: 111, defaultG: 100, cat: "主食" },
   { name: "白米饭",     kcal100: 130, defaultG: 100, cat: "主食" },
   { name: "全麦面包",   kcal100: 250, defaultG: 56,  cat: "主食" },
+  { name: "白面包",     kcal100: 265, defaultG: 56,  cat: "主食" },
   { name: "燕麦",       kcal100: 389, defaultG: 40,  cat: "主食" },
+  { name: "燕麦粥",     kcal100: 71,  defaultG: 200, cat: "主食" },
   { name: "藜麦（熟）", kcal100: 120, defaultG: 150, cat: "主食" },
   { name: "小红薯",     kcal100: 86,  defaultG: 100, cat: "主食" },
   { name: "紫薯",       kcal100: 90,  defaultG: 100, cat: "主食" },
   { name: "玉米",       kcal100: 86,  defaultG: 100, cat: "主食" },
+  { name: "面条（熟）", kcal100: 138, defaultG: 150, cat: "主食" },
+  { name: "意面（熟）", kcal100: 158, defaultG: 150, cat: "主食" },
+  { name: "馒头",       kcal100: 223, defaultG: 80,  cat: "主食" },
+  { name: "饺子",       kcal100: 200, defaultG: 100, cat: "主食" },
+  { name: "包子",       kcal100: 230, defaultG: 80,  cat: "主食" },
+  { name: "米粉（熟）", kcal100: 109, defaultG: 150, cat: "主食" },
+  { name: "土豆",       kcal100: 77,  defaultG: 100, cat: "主食" },
+  { name: "南瓜",       kcal100: 26,  defaultG: 100, cat: "主食" },
+  // 蛋白质
   { name: "鸡胸肉",     kcal100: 165, defaultG: 100, cat: "蛋白质" },
+  { name: "鸡腿肉",     kcal100: 209, defaultG: 100, cat: "蛋白质" },
   { name: "瘦牛肉",     kcal100: 143, defaultG: 100, cat: "蛋白质" },
+  { name: "牛腩",       kcal100: 332, defaultG: 100, cat: "蛋白质" },
+  { name: "猪里脊",     kcal100: 155, defaultG: 100, cat: "蛋白质" },
+  { name: "五花肉",     kcal100: 395, defaultG: 100, cat: "蛋白质" },
+  { name: "羊肉",       kcal100: 203, defaultG: 100, cat: "蛋白质" },
   { name: "三文鱼",     kcal100: 208, defaultG: 100, cat: "蛋白质" },
+  { name: "鲫鱼",       kcal100: 108, defaultG: 100, cat: "蛋白质" },
+  { name: "带鱼",       kcal100: 127, defaultG: 100, cat: "蛋白质" },
   { name: "虾",         kcal100: 99,  defaultG: 100, cat: "蛋白质" },
   { name: "鸡蛋",       kcal100: 155, defaultG: 50,  cat: "蛋白质" },
   { name: "鸡蛋白",     kcal100: 52,  defaultG: 90,  cat: "蛋白质" },
+  { name: "鸡蛋黄",     kcal100: 322, defaultG: 17,  cat: "蛋白质" },
   { name: "豆腐",       kcal100: 76,  defaultG: 150, cat: "蛋白质" },
+  { name: "豆腐干",     kcal100: 140, defaultG: 50,  cat: "蛋白质" },
+  { name: "豆浆",       kcal100: 33,  defaultG: 250, cat: "蛋白质" },
+  { name: "鸭肉",       kcal100: 240, defaultG: 100, cat: "蛋白质" },
+  { name: "金枪鱼罐头", kcal100: 116, defaultG: 85,  cat: "蛋白质" },
+  // 蔬菜
   { name: "西兰花",     kcal100: 34,  defaultG: 100, cat: "蔬菜" },
   { name: "彩椒",       kcal100: 31,  defaultG: 80,  cat: "蔬菜" },
   { name: "洋葱",       kcal100: 40,  defaultG: 75,  cat: "蔬菜" },
@@ -367,14 +408,34 @@ const FOOD_DB = [
   { name: "菠菜",       kcal100: 23,  defaultG: 100, cat: "蔬菜" },
   { name: "西葫芦",     kcal100: 17,  defaultG: 100, cat: "蔬菜" },
   { name: "蒜苗",       kcal100: 37,  defaultG: 75,  cat: "蔬菜" },
+  { name: "茄子",       kcal100: 25,  defaultG: 100, cat: "蔬菜" },
+  { name: "胡萝卜",     kcal100: 41,  defaultG: 100, cat: "蔬菜" },
+  { name: "白菜",       kcal100: 16,  defaultG: 150, cat: "蔬菜" },
+  { name: "冬瓜",       kcal100: 11,  defaultG: 150, cat: "蔬菜" },
+  { name: "苦瓜",       kcal100: 19,  defaultG: 100, cat: "蔬菜" },
+  { name: "芹菜",       kcal100: 16,  defaultG: 100, cat: "蔬菜" },
+  { name: "蘑菇",       kcal100: 22,  defaultG: 100, cat: "蔬菜" },
+  { name: "香菇",       kcal100: 34,  defaultG: 80,  cat: "蔬菜" },
+  { name: "木耳（泡发）",kcal100: 21, defaultG: 50,  cat: "蔬菜" },
+  { name: "花椰菜",     kcal100: 25,  defaultG: 100, cat: "蔬菜" },
+  { name: "豆芽",       kcal100: 18,  defaultG: 100, cat: "蔬菜" },
+  { name: "韭菜",       kcal100: 26,  defaultG: 100, cat: "蔬菜" },
+  // 乳制品
   { name: "低脂牛奶",   kcal100: 42,  defaultG: 240, cat: "乳制品" },
   { name: "全脂牛奶",   kcal100: 61,  defaultG: 240, cat: "乳制品" },
   { name: "原味酸奶",   kcal100: 63,  defaultG: 150, cat: "乳制品" },
   { name: "希腊酸奶",   kcal100: 97,  defaultG: 150, cat: "乳制品" },
+  { name: "奶酪",       kcal100: 350, defaultG: 30,  cat: "乳制品" },
+  { name: "淡奶油",     kcal100: 340, defaultG: 15,  cat: "乳制品" },
+  // 坚果
   { name: "南瓜子",     kcal100: 559, defaultG: 16,  cat: "坚果" },
   { name: "杏仁",       kcal100: 579, defaultG: 15,  cat: "坚果" },
   { name: "核桃",       kcal100: 654, defaultG: 15,  cat: "坚果" },
   { name: "花生",       kcal100: 567, defaultG: 20,  cat: "坚果" },
+  { name: "腰果",       kcal100: 553, defaultG: 15,  cat: "坚果" },
+  { name: "开心果",     kcal100: 562, defaultG: 15,  cat: "坚果" },
+  { name: "松子",       kcal100: 673, defaultG: 10,  cat: "坚果" },
+  { name: "芝麻",       kcal100: 573, defaultG: 10,  cat: "坚果" },
 ];
 
 const MEALS = [
@@ -729,9 +790,10 @@ function renderSparkline(dates) {
 }
 
 // ══════════════════════════════════════
-//  FOOD ACTIONS
+//  FOOD SEARCH (local + online)
 // ══════════════════════════════════════
 let acSelected = {};
+let searchTimers = {};
 
 function onSearch(e, mealId) {
   const q = e.target.value.trim();
@@ -739,23 +801,129 @@ function onSearch(e, mealId) {
   acSelected[mealId] = -1;
   document.getElementById("custom-kcal-row-" + mealId).style.display = "none";
   if (!q) { ac.style.display = "none"; return; }
-  const matches = FOOD_DB.filter(f => f.name.includes(q) || q.includes(f.name.slice(0,2)));
+
+  // 1. Show local results immediately
+  const local = FOOD_DB.filter(f => f.name.includes(q) || q.includes(f.name.slice(0, 2)));
+  renderAcList(mealId, q, local, null); // null = loading
+
+  // 2. Debounce online search
+  clearTimeout(searchTimers[mealId]);
+  searchTimers[mealId] = setTimeout(() => fetchOnlineCalories(q, mealId, local), 600);
+}
+
+function renderAcList(mealId, q, local, online) {
+  // online: null = still loading, [] = no results, [...] = results
+  const ac = document.getElementById("ac-" + mealId);
+  if (!ac) return;
+  const grams = parseInt(document.getElementById("gram-" + mealId)?.value) || 100;
   let html = "";
-  const cats = [...new Set(matches.map(f => f.cat))];
-  cats.forEach(cat => {
-    html += `<div class="ac-divider">${cat}</div>`;
-    matches.filter(f => f.cat === cat).forEach(f => {
-      const grams = parseInt(document.getElementById("gram-" + mealId).value) || f.defaultG;
-      const kcal = Math.round(f.kcal100 * grams / 100);
-      html += `<div class="ac-item" onmousedown="selectAcItem(event,'${mealId}','${f.name}',${f.kcal100})">
-        <span>${f.name}</span><span class="ac-kcal">${kcal}千卡 / ${grams}g</span></div>`;
+
+  // Local results grouped by category
+  if (local.length) {
+    const cats = [...new Set(local.map(f => f.cat))];
+    cats.forEach(cat => {
+      html += `<div class="ac-divider">${cat}</div>`;
+      local.filter(f => f.cat === cat).forEach(f => {
+        const kcal = Math.round(f.kcal100 * grams / 100);
+        html += `<div class="ac-item" onmousedown="selectAcItem(event,'${mealId}','${f.name}',${f.kcal100})">
+          <span>${f.name}</span>
+          <span class="ac-kcal">${kcal}千卡 / ${grams}g</span>
+        </div>`;
+      });
     });
-  });
+  }
+
+  // Online results section
+  if (online === null) {
+    // Still loading
+    html += `<div class="ac-divider online">在线搜索</div>
+      <div class="ac-loading"><span class="ac-spinner"></span>正在搜索「${q}」的营养数据…</div>`;
+  } else if (online.length > 0) {
+    html += `<div class="ac-divider online">在线搜索结果 <span style="font-size:.65rem;opacity:.7">· Open Food Facts</span></div>`;
+    online.forEach(r => {
+      const kcal = Math.round(r.kcal100 * grams / 100);
+      const badge = r.variant ? `<span class="ac-multi-label">${r.variant}</span>` : "";
+      html += `<div class="ac-item" onmousedown="selectAcItem(event,'${mealId}','${q}',${r.kcal100})">
+        <span>${q}${badge} <span class="ac-online-badge">网络</span></span>
+        <span class="ac-kcal">${kcal}千卡 / ${grams}g <span style="opacity:.55;font-size:.72rem">(${r.kcal100}/100g)</span></span>
+      </div>`;
+    });
+  } else if (online !== null && !local.length) {
+    // No local or online results
+    html += `<div class="ac-divider">未找到</div>
+      <div class="ac-loading" style="color:var(--bark)">网上未找到「${q}」的数据</div>`;
+  }
+
+  // Always show custom option at bottom
   html += `<div class="ac-divider">自定义</div>
     <div class="ac-item" onmousedown="showCustom(event,'${mealId}')">
-      <span>「${q}」— 自定义热量</span><span class="ac-kcal">手动输入</span></div>`;
+      <span>「${q}」— 手动输入热量</span><span class="ac-kcal">自定义</span>
+    </div>`;
+
   ac.innerHTML = html;
   ac.style.display = "block";
+}
+
+async function fetchOnlineCalories(q, mealId, local) {
+  try {
+    const ac = document.getElementById("ac-" + mealId);
+    if (!ac || !document.getElementById("search-" + mealId)?.value.trim()) return;
+
+    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&json=1&page_size=15&fields=product_name,nutriments&action=process`;
+    const resp = await fetch(url, { signal: AbortSignal.timeout(6000) });
+    const data = await resp.json();
+
+    // Collect valid kcal values, group by similar amounts
+    const rawResults = [];
+    for (const p of (data.products || [])) {
+      const kcal100 = p.nutriments?.['energy-kcal_100g'] ?? p.nutriments?.['energy-kcal'];
+      if (!kcal100 || kcal100 < 1 || kcal100 > 900) continue;
+      rawResults.push({ kcal100: Math.round(kcal100), name: p.product_name || '' });
+    }
+
+    if (!rawResults.length) {
+      renderAcList(mealId, q, local, []);
+      return;
+    }
+
+    // Cluster by value: group entries within ±15% of each other
+    const clusters = [];
+    rawResults.forEach(r => {
+      const existing = clusters.find(c => Math.abs(c.center - r.kcal100) / c.center < 0.15);
+      if (existing) { existing.items.push(r); existing.center = Math.round(existing.items.reduce((s,i)=>s+i.kcal100,0)/existing.items.length); }
+      else clusters.push({ center: r.kcal100, items: [r] });
+    });
+
+    // Sort clusters by frequency, keep top 3
+    clusters.sort((a, b) => b.items.length - a.items.length);
+    const top = clusters.slice(0, 3);
+
+    // Decide: if values are very similar (max differs <20% from min), show only the top one
+    const values = top.map(c => c.center);
+    const spread = (Math.max(...values) - Math.min(...values)) / Math.min(...values);
+
+    let onlineResults;
+    if (spread < 0.2 || top.length === 1) {
+      // Values are consistent — show just one result, no variant label needed
+      onlineResults = [{ kcal100: top[0].center }];
+    } else {
+      // Values differ significantly — show multiple options so user can choose
+      onlineResults = top.map((c, i) => ({
+        kcal100: c.center,
+        variant: i === 0 ? `约${c.center}千卡/100g（最常见）` : `约${c.center}千卡/100g`
+      }));
+    }
+
+    // Skip online results if local already has an exact name match
+    const exactLocal = local.find(f => f.name === q);
+    if (exactLocal && onlineResults.length === 1) onlineResults = [];
+
+    renderAcList(mealId, q, local, onlineResults);
+
+  } catch (err) {
+    // Timeout or network error — silently fall back to local only
+    renderAcList(mealId, q, local, []);
+  }
 }
 
 function onSearchKey(e, mealId) {
