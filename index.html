@@ -160,6 +160,7 @@
     .ac-spinner { width: 14px; height: 14px; border: 2px solid var(--div); border-top-color: var(--sage); border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
     .ac-online-badge { font-size: .68rem; background: #e8f4fb; color: #4a8fa8; border-radius: 4px; padding: 1px 6px; margin-left: 6px; }
     .ac-multi-label { font-size: .72rem; color: var(--bark); margin-left: 4px; font-style: italic; }
+    .ac-warn-banner { padding: 8px 14px; background: #fff8ec; border-bottom: 1px solid #fde47a; font-size: .82rem; color: var(--bark); display: flex; align-items: center; gap: 6px; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .gram-wrap { display: flex; align-items: center; gap: 3px; }
     .gram-input { width: 56px; padding: 8px 6px; text-align: center; font-size: .85rem; font-family: "Lora", serif; border: 1.5px solid var(--div); border-radius: 8px; background: #fff; color: var(--ink); }
@@ -597,7 +598,7 @@ function renderMeals() {
             <input class="food-search" id="search-${m.id}" placeholder="搜索或输入食物…" autocomplete="off"
               oninput="onSearch(event,'${m.id}')"
               onkeydown="onSearchKey(event,'${m.id}')"
-              onfocus="onSearch(event,'${m.id}')" />
+              onfocus="onFocus('${m.id}')" />
             <div class="autocomplete" id="ac-${m.id}" style="display:none"></div>
           </div>
           <div class="gram-wrap">
@@ -794,29 +795,80 @@ function renderSparkline(dates) {
 // ══════════════════════════════════════
 let acSelected = {};
 let searchTimers = {};
+// Cache search state per meal: { q, local, online, loading }
+let acState = {};
 
+const POPULAR_FOODS = ["鸡胸肉","白米饭","鸡蛋","西兰花","苹果","糙米饭","番茄","豆腐","香蕉","燕麦","黄瓜","低脂牛奶"];
+
+// Called when field is focused
+function onFocus(mealId) {
+  const searchEl = document.getElementById("search-" + mealId);
+  const q = (searchEl?.value || "").trim();
+  if (q) {
+    // Re-show cached results (or re-trigger search if not cached)
+    const st = acState[mealId];
+    if (st && st.q === q) {
+      renderAcList(mealId, q, st.local, st.loading ? null : (st.online || []), false);
+    } else {
+      onSearch({ target: searchEl }, mealId);
+    }
+  } else {
+    // Show popular foods when field is empty
+    showPopular(mealId);
+  }
+}
+
+function showPopular(mealId) {
+  const ac = document.getElementById("ac-" + mealId);
+  if (!ac) return;
+  const grams = parseInt(document.getElementById("gram-" + mealId)?.value) || 100;
+  let html = `<div class="ac-divider">常用食物</div>`;
+  POPULAR_FOODS.forEach(name => {
+    const f = FOOD_DB.find(x => x.name === name);
+    if (!f) return;
+    const kcal = Math.round(f.kcal100 * grams / 100);
+    html += `<div class="ac-item" onmousedown="selectAcItem(event,'${mealId}','${f.name}',${f.kcal100})">
+      <span>${f.name}</span>
+      <span class="ac-kcal">${kcal}千卡 / ${grams}g</span>
+    </div>`;
+  });
+  ac.innerHTML = html;
+  ac.style.display = "block";
+}
+
+// Called on every keystroke
 function onSearch(e, mealId) {
   const q = e.target.value.trim();
-  const ac = document.getElementById("ac-" + mealId);
-  acSelected[mealId] = -1;
   document.getElementById("custom-kcal-row-" + mealId).style.display = "none";
-  if (!q) { ac.style.display = "none"; return; }
+  acSelected[mealId] = -1;
 
-  // 1. Show local results immediately
+  if (!q) { showPopular(mealId); return; }
+
+  // 1. Instant local results
   const local = FOOD_DB.filter(f => f.name.includes(q) || q.includes(f.name.slice(0, 2)));
-  renderAcList(mealId, q, local, null); // null = loading
+  acState[mealId] = { q, local, online: null, loading: true };
+  renderAcList(mealId, q, local, null, false);
 
-  // 2. Debounce online search
+  // 2. Debounced online search
   clearTimeout(searchTimers[mealId]);
   searchTimers[mealId] = setTimeout(() => fetchOnlineCalories(q, mealId, local), 600);
 }
 
-function renderAcList(mealId, q, local, online) {
-  // online: null = still loading, [] = no results, [...] = results
+// Render autocomplete dropdown
+// warnMode: true = show "please select first" banner at top
+function renderAcList(mealId, q, local, online, warnMode) {
   const ac = document.getElementById("ac-" + mealId);
   if (!ac) return;
   const grams = parseInt(document.getElementById("gram-" + mealId)?.value) || 100;
   let html = "";
+
+  // Warning banner when user tried to Add without selecting
+  if (warnMode) {
+    const msg = online && online.length > 1
+      ? "⚠️ 找到多种热量数值，请选择其中一个："
+      : "⚠️ 请先从下方点击选择食物和热量：";
+    html += `<div class="ac-warn-banner">${msg}</div>`;
+  }
 
   // Local results grouped by category
   if (local.length) {
@@ -833,28 +885,29 @@ function renderAcList(mealId, q, local, online) {
     });
   }
 
-  // Online results section
+  // Online section
   if (online === null) {
-    // Still loading
     html += `<div class="ac-divider online">在线搜索</div>
       <div class="ac-loading"><span class="ac-spinner"></span>正在搜索「${q}」的营养数据…</div>`;
   } else if (online.length > 0) {
-    html += `<div class="ac-divider online">在线搜索结果 <span style="font-size:.65rem;opacity:.7">· Open Food Facts</span></div>`;
+    const label = online.length > 1
+      ? `在线搜索 — 有 ${online.length} 种结果，请选择 <span style="font-size:.62rem;opacity:.6">· Open Food Facts</span>`
+      : `在线搜索结果 <span style="font-size:.62rem;opacity:.6">· Open Food Facts</span>`;
+    html += `<div class="ac-divider online">${label}</div>`;
     online.forEach(r => {
       const kcal = Math.round(r.kcal100 * grams / 100);
-      const badge = r.variant ? `<span class="ac-multi-label">${r.variant}</span>` : "";
+      const variantLabel = r.variant ? `<span class="ac-multi-label">· ${r.variant}</span>` : "";
       html += `<div class="ac-item" onmousedown="selectAcItem(event,'${mealId}','${q}',${r.kcal100})">
-        <span>${q}${badge} <span class="ac-online-badge">网络</span></span>
-        <span class="ac-kcal">${kcal}千卡 / ${grams}g <span style="opacity:.55;font-size:.72rem">(${r.kcal100}/100g)</span></span>
+        <span>${q} ${variantLabel} <span class="ac-online-badge">网络</span></span>
+        <span class="ac-kcal">${kcal}千卡 / ${grams}g <span style="opacity:.5;font-size:.7rem">(${r.kcal100}/100g)</span></span>
       </div>`;
     });
-  } else if (online !== null && !local.length) {
-    // No local or online results
-    html += `<div class="ac-divider">未找到</div>
-      <div class="ac-loading" style="color:var(--bark)">网上未找到「${q}」的数据</div>`;
+  } else if (!local.length) {
+    html += `<div class="ac-divider">未找到数据</div>
+      <div class="ac-loading" style="color:var(--bark)">「${q}」暂无数据，请手动输入热量</div>`;
   }
 
-  // Always show custom option at bottom
+  // Custom option always at bottom
   html += `<div class="ac-divider">自定义</div>
     <div class="ac-item" onmousedown="showCustom(event,'${mealId}')">
       <span>「${q}」— 手动输入热量</span><span class="ac-kcal">自定义</span>
@@ -866,63 +919,62 @@ function renderAcList(mealId, q, local, online) {
 
 async function fetchOnlineCalories(q, mealId, local) {
   try {
-    const ac = document.getElementById("ac-" + mealId);
-    if (!ac || !document.getElementById("search-" + mealId)?.value.trim()) return;
+    const searchEl = document.getElementById("search-" + mealId);
+    if (!searchEl || searchEl.value.trim() !== q) return; // stale query
 
     const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&json=1&page_size=15&fields=product_name,nutriments&action=process`;
     const resp = await fetch(url, { signal: AbortSignal.timeout(6000) });
     const data = await resp.json();
 
-    // Collect valid kcal values, group by similar amounts
     const rawResults = [];
     for (const p of (data.products || [])) {
       const kcal100 = p.nutriments?.['energy-kcal_100g'] ?? p.nutriments?.['energy-kcal'];
       if (!kcal100 || kcal100 < 1 || kcal100 > 900) continue;
-      rawResults.push({ kcal100: Math.round(kcal100), name: p.product_name || '' });
+      rawResults.push({ kcal100: Math.round(kcal100) });
     }
 
     if (!rawResults.length) {
-      renderAcList(mealId, q, local, []);
+      acState[mealId] = { q, local, online: [], loading: false };
+      renderAcList(mealId, q, local, [], false);
       return;
     }
 
-    // Cluster by value: group entries within ±15% of each other
+    // Cluster by value (±15% of each other)
     const clusters = [];
     rawResults.forEach(r => {
-      const existing = clusters.find(c => Math.abs(c.center - r.kcal100) / c.center < 0.15);
-      if (existing) { existing.items.push(r); existing.center = Math.round(existing.items.reduce((s,i)=>s+i.kcal100,0)/existing.items.length); }
+      const ex = clusters.find(c => Math.abs(c.center - r.kcal100) / c.center < 0.15);
+      if (ex) { ex.items.push(r); ex.center = Math.round(ex.items.reduce((s,i)=>s+i.kcal100,0)/ex.items.length); }
       else clusters.push({ center: r.kcal100, items: [r] });
     });
-
-    // Sort clusters by frequency, keep top 3
     clusters.sort((a, b) => b.items.length - a.items.length);
     const top = clusters.slice(0, 3);
-
-    // Decide: if values are very similar (max differs <20% from min), show only the top one
     const values = top.map(c => c.center);
     const spread = (Math.max(...values) - Math.min(...values)) / Math.min(...values);
 
     let onlineResults;
     if (spread < 0.2 || top.length === 1) {
-      // Values are consistent — show just one result, no variant label needed
       onlineResults = [{ kcal100: top[0].center }];
     } else {
-      // Values differ significantly — show multiple options so user can choose
       onlineResults = top.map((c, i) => ({
         kcal100: c.center,
-        variant: i === 0 ? `约${c.center}千卡/100g（最常见）` : `约${c.center}千卡/100g`
+        variant: i === 0 ? `${c.center}千卡/100g（最常见）` : `${c.center}千卡/100g`
       }));
     }
 
-    // Skip online results if local already has an exact name match
-    const exactLocal = local.find(f => f.name === q);
-    if (exactLocal && onlineResults.length === 1) onlineResults = [];
+    // If local has exact match and only 1 online result, skip online
+    if (local.find(f => f.name === q) && onlineResults.length === 1) onlineResults = [];
 
-    renderAcList(mealId, q, local, onlineResults);
-
+    acState[mealId] = { q, local, online: onlineResults, loading: false };
+    // Only re-render if this search is still the current one
+    if (document.getElementById("search-" + mealId)?.value.trim() === q) {
+      renderAcList(mealId, q, local, onlineResults, false);
+    }
   } catch (err) {
-    // Timeout or network error — silently fall back to local only
-    renderAcList(mealId, q, local, []);
+    if (acState[mealId]?.q === q) {
+      acState[mealId].loading = false;
+      acState[mealId].online = [];
+    }
+    renderAcList(mealId, q, local, [], false);
   }
 }
 
@@ -958,12 +1010,44 @@ function showCustom(e, mealId) {
 function addCustom(mealId) {
   const searchEl = document.getElementById("search-" + mealId);
   const name = searchEl.value.trim();
-  if (!name) return;
+  if (!name) { searchEl.focus(); return; }
   const grams = parseFloat(document.getElementById("gram-" + mealId).value) || 100;
+
+  // ① User already selected a calorie value from dropdown
   const kcal100 = parseFloat(searchEl.dataset.kcal100 || 0);
-  if (kcal100 > 0) { pushFood(mealId, name, grams, kcal100); searchEl.value = ""; searchEl.dataset.kcal100 = ""; return; }
+  if (kcal100 > 0) {
+    pushFood(mealId, name, grams, kcal100);
+    searchEl.value = ""; searchEl.dataset.kcal100 = "";
+    document.getElementById("ac-" + mealId).style.display = "none";
+    return;
+  }
+
+  // ② Exact match in local DB — use it directly
   const dbMatch = FOOD_DB.find(f => f.name === name);
-  if (dbMatch) { pushFood(mealId, name, grams, dbMatch.kcal100); searchEl.value = ""; return; }
+  if (dbMatch) {
+    pushFood(mealId, name, grams, dbMatch.kcal100);
+    searchEl.value = "";
+    document.getElementById("ac-" + mealId).style.display = "none";
+    return;
+  }
+
+  // ③ Online results available or still loading — force user to select
+  const st = acState[mealId];
+  if (st && st.q === name) {
+    if (st.loading) {
+      // Still fetching: show warning and keep spinner visible
+      renderAcList(mealId, name, st.local, null, true);
+      return;
+    }
+    if ((st.online && st.online.length > 0) || st.local.length > 0) {
+      // Results exist: re-open dropdown with warning banner
+      renderAcList(mealId, name, st.local, st.online || [], true);
+      return;
+    }
+  }
+
+  // ④ Truly no data found — show manual input
+  document.getElementById("ac-" + mealId).style.display = "none";
   document.getElementById("custom-kcal-row-" + mealId).style.display = "flex";
   document.getElementById("custom-kcal-" + mealId).focus();
 }
