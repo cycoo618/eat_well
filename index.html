@@ -9,139 +9,78 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --cream:   #faf6ef;
-      --paper:   #f3ede2;
-      --forest:  #2c5f3f;
-      --sage:    #7aab8a;
-      --bark:    #8b5e3c;
-      --ember:   #d4623a;
-      --gold:    #c9963a;
-      --ink:     #1c1812;
-      --mist:    #6b6358;
-      --div:     #dfd8cc;
-      --ok:      #2c7a4b;
-      --warn:    #c9963a;
-      --over:    #c0392b;
+      --cream:  #faf6ef;
+      --paper:  #f3ede2;
+      --forest: #2c5f3f;
+      --sage:   #7aab8a;
+      --bark:   #8b5e3c;
+      --ember:  #d4623a;
+      --gold:   #c9963a;
+      --ink:    #1c1812;
+      --mist:   #6b6358;
+      --div:    #dfd8cc;
+      --ok:     #2c7a4b;
+      --warn:   #c9963a;
+      --over:   #c0392b;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 17px; }
     body {
       font-family: "Noto Serif SC", "Songti SC", Georgia, serif;
-      background: var(--cream);
-      color: var(--ink);
-      min-height: 100vh;
-      padding: 40px 20px 80px;
+      background: var(--cream); color: var(--ink);
+      min-height: 100vh; padding: 40px 20px 80px;
     }
     body::before {
-      content: "";
-      position: fixed; inset: 0;
+      content: ""; position: fixed; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
       pointer-events: none; z-index: 0; opacity: 0.7;
     }
-    .page { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; }
+    .page { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
 
     /* ── HEADER ── */
-    .header { text-align: center; margin-bottom: 40px; animation: fadeUp .5s ease both; }
+    .header { text-align: center; margin-bottom: 36px; animation: fadeUp .5s ease both; }
     .header h1 { font-size: 2.4rem; font-weight: 700; color: var(--forest); letter-spacing: -.01em; }
-    .header-date {
-      display: inline-block; margin-top: 10px;
-      font-size: .82rem; color: var(--mist);
-      background: var(--paper); border: 1px solid var(--div);
-      border-radius: 999px; padding: 4px 16px;
-    }
+    .header-date { display: inline-block; margin-top: 10px; font-size: .82rem; color: var(--mist); background: var(--paper); border: 1px solid var(--div); border-radius: 999px; padding: 4px 16px; }
 
     /* ── TARGET CARD ── */
     .target-card {
       background: var(--forest); color: #fff;
-      border-radius: 16px; padding: 28px 32px;
-      margin-bottom: 28px;
-      display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
+      border-radius: 16px; padding: 24px 28px; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
       animation: fadeUp .5s .1s ease both;
     }
-    .target-left { flex: 1; min-width: 180px; }
+    .target-left { flex: 1; min-width: 160px; }
     .target-label { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; opacity: .7; margin-bottom: 6px; }
     .target-input-row { display: flex; align-items: center; gap: 10px; }
     .target-input {
-      font-family: "Lora", serif; font-size: 2.4rem; font-weight: 600;
+      font-family: "Lora", serif; font-size: 2.2rem; font-weight: 600;
       background: rgba(255,255,255,.12); border: 1.5px solid rgba(255,255,255,.25);
-      border-radius: 8px; color: #fff;
-      width: 130px; padding: 6px 12px; text-align: center;
+      border-radius: 8px; color: #fff; width: 120px; padding: 5px 10px; text-align: center;
     }
-    .target-input:focus { outline: none; border-color: rgba(255,255,255,.6); background: rgba(255,255,255,.18); }
+    .target-input:focus { outline: none; border-color: rgba(255,255,255,.6); }
     .target-unit { font-size: 1rem; opacity: .8; }
-    .target-right { flex: 2; min-width: 240px; }
+    .target-right { flex: 2; min-width: 200px; }
     .bar-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: .82rem; }
     .bar-track { background: rgba(255,255,255,.18); border-radius: 999px; height: 14px; overflow: hidden; }
-    .bar-fill {
-      height: 100%; border-radius: 999px;
-      background: linear-gradient(90deg, #a8d5b0, #f2d57e);
-      transition: width .4s ease, background .4s; min-width: 2px;
-    }
-    .bar-fill.warn { background: linear-gradient(90deg, #f2d57e, #e8924a); }
-    .bar-fill.over  { background: linear-gradient(90deg, #e8924a, #c0392b); }
-    .bar-stats { display: flex; gap: 20px; margin-top: 12px; flex-wrap: wrap; }
-    .bar-stat { font-size: .78rem; opacity: .8; }
-    .bar-stat strong { font-size: 1.1rem; font-family: "Lora", serif; opacity: 1; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg,#a8d5b0,#f2d57e); transition: width .4s, background .4s; min-width: 2px; }
+    .bar-fill.warn { background: linear-gradient(90deg,#f2d57e,#e8924a); }
+    .bar-fill.over  { background: linear-gradient(90deg,#e8924a,#c0392b); }
+    .bar-count { margin-top: 10px; font-size: .78rem; opacity: .75; }
 
-    /* ── MEALS GRID ── */
-    .meals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-    @media (max-width: 620px) { .meals-grid { grid-template-columns: 1fr; } }
-
-    /* ── MEAL CARD ── */
-    .meal-card {
+    /* ── ADD PANEL ── */
+    .add-panel {
       background: #fff; border: 1.5px solid var(--div); border-radius: 14px;
-      overflow: hidden; box-shadow: 0 2px 16px rgba(44,95,63,.05);
-      display: flex; flex-direction: column; animation: fadeUp .5s ease both;
+      padding: 18px 20px; margin-bottom: 20px;
+      box-shadow: 0 2px 16px rgba(44,95,63,.05);
+      animation: fadeUp .5s .18s ease both;
     }
-    .meal-card:nth-child(1) { animation-delay: .2s; }
-    .meal-card:nth-child(2) { animation-delay: .28s; }
-    .meal-card:nth-child(3) { animation-delay: .36s; }
-    .meal-card:nth-child(4) { animation-delay: .44s; }
-    .meal-card-head {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 18px;
-      background: linear-gradient(to right, #f6f0e8, #faf6ef);
-      border-bottom: 1px solid var(--div);
-    }
-    .meal-title { display: flex; align-items: center; gap: 10px; }
-    .meal-emoji { font-size: 1.4rem; }
-    .meal-name  { font-size: 1rem; font-weight: 700; color: var(--ink); }
-    .meal-target-label { font-size: .72rem; color: var(--mist); margin-top: 2px; }
-    .meal-total { font-family: "Lora", serif; font-size: 1.15rem; font-weight: 600; color: var(--ok); transition: color .3s; }
-    .meal-total.warn { color: var(--warn); }
-    .meal-total.over { color: var(--over); }
-    .meal-mini-bar { height: 4px; background: #f0ebe2; }
-    .meal-mini-fill { height: 100%; background: var(--sage); transition: width .4s, background .4s; }
-    .meal-mini-fill.warn { background: var(--gold); }
-    .meal-mini-fill.over { background: var(--ember); }
-    .food-list { flex: 1; padding: 0; }
-    .food-item {
-      display: grid; grid-template-columns: 1fr 90px 52px 28px;
-      align-items: center; gap: 6px;
-      padding: 10px 16px; border-bottom: 1px solid #f6f0e8; font-size: .88rem;
-    }
-    .food-item:last-child { border-bottom: none; }
-    .food-item-name { color: var(--ink); font-weight: 500; }
-    .food-item-g-wrap { display: flex; align-items: center; gap: 3px; }
-    .food-item-g {
-      font-size: .82rem; color: var(--mist);
-      background: var(--paper); border: 1px solid var(--div);
-      border-radius: 6px; padding: 3px 6px;
-      width: 56px; text-align: center; font-family: "Lora", serif;
-    }
-    .food-item-g-unit { font-size: .75rem; color: var(--mist); white-space: nowrap; }
-    .food-item-g:focus { outline: none; border-color: var(--sage); }
-    .food-item-kcal { font-family: "Lora", serif; font-size: .9rem; color: var(--ember); text-align: right; }
-    .food-del { background: none; border: none; cursor: pointer; color: #ccc; font-size: 1rem; padding: 2px 4px; border-radius: 4px; transition: color .15s; }
-    .food-del:hover { color: var(--over); }
-    .food-empty { padding: 18px 16px; font-size: .82rem; color: var(--mist); font-style: italic; text-align: center; }
-    .add-area { padding: 12px 14px; border-top: 1px dashed var(--div); background: #fdfaf5; }
-    .add-row { display: flex; gap: 6px; align-items: center; }
-    .search-wrap { position: relative; flex: 1; }
+    .add-panel-title { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--mist); margin-bottom: 12px; }
+    .add-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .search-wrap { position: relative; flex: 1; min-width: 160px; }
     .food-search {
-      width: 100%; padding: 8px 12px; font-size: .85rem;
+      width: 100%; padding: 10px 14px; font-size: .92rem;
       font-family: "Noto Serif SC", serif;
-      border: 1.5px solid var(--div); border-radius: 8px;
+      border: 1.5px solid var(--div); border-radius: 10px;
       background: #fff; color: var(--ink);
     }
     .food-search:focus { outline: none; border-color: var(--sage); }
@@ -149,7 +88,7 @@
       position: absolute; top: calc(100% + 4px); left: 0; right: 0;
       background: #fff; border: 1.5px solid var(--div); border-radius: 10px;
       box-shadow: 0 8px 24px rgba(0,0,0,.1);
-      z-index: 100; max-height: 220px; overflow-y: auto;
+      z-index: 200; max-height: 240px; overflow-y: auto;
     }
     .ac-item { padding: 9px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: .85rem; transition: background .12s; }
     .ac-item:hover, .ac-item.focused { background: #f3ede2; }
@@ -160,63 +99,104 @@
     .ac-spinner { width: 14px; height: 14px; border: 2px solid var(--div); border-top-color: var(--sage); border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
     .ac-online-badge { font-size: .68rem; background: #e8f4fb; color: #4a8fa8; border-radius: 4px; padding: 1px 6px; margin-left: 6px; }
     .ac-multi-label { font-size: .72rem; color: var(--bark); margin-left: 4px; font-style: italic; }
-    .ac-warn-banner { padding: 8px 14px; background: #fff8ec; border-bottom: 1px solid #fde47a; font-size: .82rem; color: var(--bark); display: flex; align-items: center; gap: 6px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .gram-wrap { display: flex; align-items: center; gap: 3px; }
-    .gram-input { width: 56px; padding: 8px 6px; text-align: center; font-size: .85rem; font-family: "Lora", serif; border: 1.5px solid var(--div); border-radius: 8px; background: #fff; color: var(--ink); }
+    .ac-warn-banner { padding: 8px 14px; background: #fff8ec; border-bottom: 1px solid #fde47a; font-size: .82rem; color: var(--bark); }
+    .gram-wrap { display: flex; align-items: center; gap: 4px; }
+    .gram-input { width: 64px; padding: 10px 6px; text-align: center; font-size: .9rem; font-family: "Lora", serif; border: 1.5px solid var(--div); border-radius: 10px; background: #fff; color: var(--ink); }
     .gram-input:focus { outline: none; border-color: var(--sage); }
     .gram-unit { font-size: .78rem; color: var(--mist); white-space: nowrap; }
-    .add-btn { padding: 8px 14px; background: var(--forest); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: .82rem; font-family: "Noto Serif SC", serif; transition: background .15s; white-space: nowrap; }
+    .add-btn { padding: 10px 20px; background: var(--forest); color: #fff; border: none; border-radius: 10px; cursor: pointer; font-size: .88rem; font-family: "Noto Serif SC", serif; transition: background .15s; white-space: nowrap; }
     .add-btn:hover { background: #1e4530; }
-    .custom-kcal-row { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
-    .custom-kcal-input { flex: 1; padding: 7px 10px; font-size: .83rem; border: 1.5px solid #f0c060; border-radius: 8px; background: #fffbf0; font-family: "Lora", serif; }
+    .custom-kcal-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+    .custom-kcal-input { flex: 1; padding: 8px 10px; font-size: .85rem; border: 1.5px solid #f0c060; border-radius: 8px; background: #fffbf0; font-family: "Lora", serif; }
     .custom-kcal-input:focus { outline: none; border-color: var(--gold); }
     .custom-label { font-size: .75rem; color: var(--bark); white-space: nowrap; }
-    .custom-add-btn { padding: 7px 12px; background: var(--gold); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: .8rem; font-family: "Noto Serif SC", serif; }
+    .custom-add-btn { padding: 8px 14px; background: var(--gold); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: .82rem; font-family: "Noto Serif SC", serif; }
+
+    /* ── FEED (today's entries) ── */
+    .feed-card {
+      background: #fff; border: 1.5px solid var(--div); border-radius: 14px;
+      overflow: hidden; margin-bottom: 20px;
+      box-shadow: 0 2px 16px rgba(44,95,63,.05);
+      animation: fadeUp .5s .26s ease both;
+    }
+    .feed-card-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; background: linear-gradient(to right,#f6f0e8,#faf6ef);
+      border-bottom: 1px solid var(--div);
+    }
+    .feed-card-title { font-size: .95rem; font-weight: 700; color: var(--ink); }
+    .feed-total { font-family: "Lora", serif; font-size: 1.1rem; font-weight: 600; color: var(--ok); transition: color .3s; }
+    .feed-total.warn { color: var(--warn); }
+    .feed-total.over { color: var(--over); }
+    .feed-empty { padding: 28px; text-align: center; font-size: .88rem; color: var(--mist); font-style: italic; }
+
+    /* time group header */
+    .feed-group-header {
+      padding: 6px 20px 4px;
+      font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--mist); background: #faf6ef;
+      border-bottom: 1px solid #f3ede2;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .feed-group-header::after { content: ""; flex: 1; height: 1px; background: var(--div); }
+
+    /* entry row */
+    .entry-row {
+      display: grid;
+      grid-template-columns: 52px 1fr 100px 56px 28px;
+      align-items: center; gap: 6px;
+      padding: 11px 20px; border-bottom: 1px solid #f6f0e8;
+      transition: background .12s;
+    }
+    .entry-row:last-child { border-bottom: none; }
+    .entry-row:hover { background: #fdfaf5; }
+    .entry-time { font-family: "Lora", serif; font-size: .82rem; color: var(--mist); white-space: nowrap; }
+    .entry-name { font-size: .92rem; font-weight: 600; color: var(--ink); }
+    .entry-g-wrap { display: flex; align-items: center; gap: 3px; }
+    .entry-g {
+      font-size: .82rem; color: var(--mist);
+      background: var(--paper); border: 1px solid var(--div);
+      border-radius: 6px; padding: 3px 6px;
+      width: 58px; text-align: center; font-family: "Lora", serif;
+    }
+    .entry-g:focus { outline: none; border-color: var(--sage); }
+    .entry-g-unit { font-size: .72rem; color: var(--mist); }
+    .entry-kcal { font-family: "Lora", serif; font-size: .92rem; color: var(--ember); text-align: right; white-space: nowrap; }
+    .entry-del { background: none; border: none; cursor: pointer; color: #ccc; font-size: 1rem; padding: 2px 4px; border-radius: 4px; transition: color .15s; text-align: center; }
+    .entry-del:hover { color: var(--over); }
 
     /* ── SUMMARY ── */
-    .summary { background: #fff; border: 1.5px solid var(--div); border-radius: 14px; padding: 22px 28px; animation: fadeUp .5s .5s ease both; }
-    .summary-title { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--mist); margin-bottom: 16px; }
-    .summary-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #f3ede2; }
+    .summary {
+      background: #fff; border: 1.5px solid var(--div); border-radius: 14px;
+      padding: 20px 24px; animation: fadeUp .5s .34s ease both;
+    }
+    .summary-title { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--mist); margin-bottom: 14px; }
+    .summary-row { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-bottom: 1px solid #f3ede2; font-size: .9rem; }
     .summary-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .summary-meal { display: flex; align-items: center; gap: 8px; font-size: .92rem; }
-    .s-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .summary-label { display: flex; align-items: center; gap: 8px; color: var(--mist); }
+    .s-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
     .summary-val { font-family: "Lora", serif; font-size: 1rem; font-weight: 600; color: var(--ink); }
-    .summary-pct { font-size: .75rem; color: var(--mist); margin-left: 6px; }
-    .summary-remaining { margin-top: 18px; padding: 14px 18px; border-radius: 10px; text-align: center; font-size: .92rem; font-weight: 600; transition: background .4s, color .4s; }
+    .summary-pct { font-size: .72rem; color: var(--mist); margin-left: 5px; }
+    .summary-remaining { margin-top: 16px; padding: 13px 16px; border-radius: 10px; text-align: center; font-size: .92rem; font-weight: 600; transition: background .4s, color .4s; }
     .summary-remaining.ok   { background: #e8f5ed; color: var(--ok); }
     .summary-remaining.warn { background: #fef8e7; color: var(--warn); }
     .summary-remaining.over { background: #fdecea; color: var(--over); }
 
     /* ── FOOTER ── */
-    .footer-actions { text-align: center; margin-top: 24px; animation: fadeUp .5s .6s ease both; }
+    .footer-actions { text-align: center; margin-top: 20px; animation: fadeUp .5s .4s ease both; }
     .reset-btn { background: none; border: 1.5px solid var(--div); border-radius: 999px; color: var(--mist); padding: 8px 24px; cursor: pointer; font-size: .82rem; font-family: "Noto Serif SC", serif; transition: all .15s; }
     .reset-btn:hover { border-color: var(--ember); color: var(--ember); }
 
-    /* ══════════════════════════════════
-       HISTORY SECTION
-    ══════════════════════════════════ */
-    .history-section {
-      margin-top: 40px;
-      background: #fff; border: 1.5px solid var(--div); border-radius: 14px;
-      overflow: hidden; animation: fadeUp .5s .65s ease both;
-    }
-    .history-head {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 24px; cursor: pointer;
-      background: linear-gradient(to right, #f6f0e8, #faf6ef);
-      border-bottom: 1px solid var(--div);
-      user-select: none;
-    }
+    /* ── HISTORY ── */
+    .history-section { margin-top: 36px; background: #fff; border: 1.5px solid var(--div); border-radius: 14px; overflow: hidden; animation: fadeUp .5s .46s ease both; }
+    .history-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; cursor: pointer; background: linear-gradient(to right,#f6f0e8,#faf6ef); border-bottom: 1px solid var(--div); user-select: none; }
     .history-head:hover { background: #f0e8d8; }
     .history-head-left { display: flex; align-items: center; gap: 10px; }
     .history-head-title { font-size: 1rem; font-weight: 700; color: var(--ink); }
     .history-count { font-size: .75rem; background: var(--forest); color: #fff; border-radius: 999px; padding: 2px 10px; }
     .history-toggle { font-size: .9rem; color: var(--mist); transition: transform .25s; }
     .history-toggle.open { transform: rotate(180deg); }
-
-    /* sparkline */
-    .sparkline-wrap { padding: 20px 24px 8px; border-bottom: 1px solid var(--div); }
+    .sparkline-wrap { padding: 18px 24px 8px; border-bottom: 1px solid var(--div); }
     .sparkline-label { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--mist); margin-bottom: 10px; }
     .sparkline-chart { width: 100%; height: 60px; }
     .spark-line { fill: none; stroke: var(--sage); stroke-width: 2; stroke-linejoin: round; }
@@ -224,48 +204,33 @@
     .spark-dot { fill: var(--forest); }
     .spark-dot-over { fill: var(--ember); }
     .spark-dot-warn { fill: var(--gold); }
-
-    /* history list */
     .history-list { max-height: 480px; overflow-y: auto; }
-    .hist-row {
-      border-bottom: 1px solid #f3ede2;
-    }
+    .hist-row { border-bottom: 1px solid #f3ede2; }
     .hist-row:last-child { border-bottom: none; }
-    .hist-row-main {
-      display: flex; align-items: center; gap: 12px;
-      padding: 14px 24px; cursor: pointer; transition: background .12s;
-    }
+    .hist-row-main { display: flex; align-items: center; gap: 12px; padding: 14px 24px; cursor: pointer; transition: background .12s; }
     .hist-row-main:hover { background: #faf6ef; }
     .hist-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .hist-date { flex: 1; font-size: .92rem; font-weight: 600; color: var(--ink); }
     .hist-date-sub { font-size: .72rem; color: var(--mist); font-weight: 400; margin-left: 6px; }
     .hist-bar-wrap { flex: 2; }
     .hist-bar-track { height: 6px; background: var(--paper); border-radius: 999px; overflow: hidden; margin-bottom: 3px; }
-    .hist-bar-fill { height: 100%; border-radius: 999px; transition: width .4s; }
+    .hist-bar-fill { height: 100%; border-radius: 999px; }
     .hist-bar-labels { display: flex; justify-content: space-between; font-size: .68rem; color: var(--mist); }
     .hist-kcal { font-family: "Lora", serif; font-size: 1rem; font-weight: 600; min-width: 50px; text-align: right; }
     .hist-expand-icon { color: var(--mist); font-size: .8rem; transition: transform .2s; margin-left: 4px; }
     .hist-expand-icon.open { transform: rotate(90deg); }
     .hist-del { background: none; border: none; color: #ccc; cursor: pointer; font-size: .9rem; padding: 2px 6px; border-radius: 4px; transition: color .15s; }
     .hist-del:hover { color: var(--over); }
-
-    /* detail panel */
-    .hist-detail {
-      display: none; padding: 0 24px 16px 46px;
-      background: #fdfaf5;
-    }
+    .hist-detail { display: none; padding: 0 24px 16px 46px; background: #fdfaf5; }
     .hist-detail.open { display: block; }
-    .hist-detail-meal { margin-bottom: 10px; }
-    .hist-detail-meal-title { font-size: .78rem; font-weight: 700; color: var(--mist); letter-spacing: .06em; margin-bottom: 4px; text-transform: uppercase; }
-    .hist-detail-food { display: flex; justify-content: space-between; font-size: .82rem; padding: 3px 0; border-bottom: 1px solid #f0ebe2; color: var(--ink); }
-    .hist-detail-food:last-child { border-bottom: none; }
-    .hist-detail-food-kcal { font-family: "Lora", serif; color: var(--ember); }
+    .hist-detail-entry { display: flex; justify-content: space-between; align-items: baseline; font-size: .82rem; padding: 4px 0; border-bottom: 1px solid #f0ebe2; color: var(--ink); }
+    .hist-detail-entry:last-child { border-bottom: none; }
+    .hist-detail-time { font-family: "Lora", serif; font-size: .75rem; color: var(--mist); min-width: 38px; }
+    .hist-detail-kcal { font-family: "Lora", serif; color: var(--ember); }
     .hist-empty { padding: 32px; text-align: center; font-size: .88rem; color: var(--mist); font-style: italic; }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes spin   { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -278,7 +243,7 @@
   </div>
 
   <!-- TARGET CARD -->
-  <div class="target-card" id="targetCard">
+  <div class="target-card">
     <div class="target-left">
       <div class="target-label">每日热量目标</div>
       <div class="target-input-row">
@@ -292,17 +257,42 @@
         <span id="remainLabel">剩余 <strong>1478</strong> 千卡</span>
       </div>
       <div class="bar-track"><div class="bar-fill" id="mainBarFill" style="width:0%"></div></div>
-      <div class="bar-stats">
-        <span class="bar-stat">早餐 <strong id="s0">0</strong></span>
-        <span class="bar-stat">午餐 <strong id="s1">0</strong></span>
-        <span class="bar-stat">晚餐 <strong id="s2">0</strong></span>
-        <span class="bar-stat">加餐 <strong id="s3">0</strong></span>
-      </div>
+      <div class="bar-count" id="barCount">今日 0 条记录</div>
     </div>
   </div>
 
-  <!-- MEAL CARDS -->
-  <div class="meals-grid" id="mealsGrid"></div>
+  <!-- ADD PANEL -->
+  <div class="add-panel">
+    <div class="add-panel-title">添加食物 — 时间自动记录</div>
+    <div class="add-row">
+      <div class="search-wrap">
+        <input class="food-search" id="mainSearch" placeholder="搜索或输入食物名称…" autocomplete="off"
+          oninput="onSearch(event)"
+          onkeydown="onSearchKey(event)"
+          onfocus="onFocus()" />
+        <div class="autocomplete" id="mainAc" style="display:none"></div>
+      </div>
+      <div class="gram-wrap">
+        <input class="gram-input" id="mainGram" type="number" value="100" min="1" max="2000" />
+        <span class="gram-unit">克</span>
+      </div>
+      <button class="add-btn" onclick="addFood()">+ 添加</button>
+    </div>
+    <div id="customKcalRow" style="display:none" class="custom-kcal-row">
+      <span class="custom-label">自定义热量：</span>
+      <input class="custom-kcal-input" id="customKcal" type="number" placeholder="千卡 / 100g" min="0" max="900" />
+      <button class="custom-add-btn" onclick="addFoodCustomConfirm()">确认添加</button>
+    </div>
+  </div>
+
+  <!-- TODAY'S FEED -->
+  <div class="feed-card">
+    <div class="feed-card-head">
+      <span class="feed-card-title">今日进食记录</span>
+      <span class="feed-total" id="feedTotal">0 <span style="font-size:.7rem;font-weight:400;opacity:.7">千卡</span></span>
+    </div>
+    <div id="feedList"></div>
+  </div>
 
   <!-- SUMMARY -->
   <div class="summary">
@@ -311,13 +301,12 @@
     <div class="summary-remaining ok" id="summaryRemaining">尚未添加任何食物</div>
   </div>
 
-  <!-- FOOTER ACTIONS -->
   <div class="footer-actions">
     <button class="reset-btn" onclick="resetAll()">清空今日记录</button>
   </div>
 
   <!-- HISTORY -->
-  <div class="history-section" id="historySection">
+  <div class="history-section">
     <div class="history-head" onclick="toggleHistory()">
       <div class="history-head-left">
         <span style="font-size:1.2rem">📅</span>
@@ -335,220 +324,211 @@
 </div>
 
 <script>
-// ══════════════════════════════════════
+// ══════════════════════════════════
 //  FOOD DATABASE
-// ══════════════════════════════════════
+// ══════════════════════════════════
 const FOOD_DB = [
-  // 水果
-  { name: "蓝莓",       kcal100: 57,  defaultG: 100, cat: "水果" },
-  { name: "草莓",       kcal100: 32,  defaultG: 100, cat: "水果" },
-  { name: "苹果",       kcal100: 52,  defaultG: 150, cat: "水果" },
-  { name: "香蕉",       kcal100: 89,  defaultG: 100, cat: "水果" },
-  { name: "橙子",       kcal100: 47,  defaultG: 150, cat: "水果" },
-  { name: "葡萄",       kcal100: 67,  defaultG: 100, cat: "水果" },
-  { name: "西瓜",       kcal100: 30,  defaultG: 200, cat: "水果" },
-  { name: "橘子",       kcal100: 44,  defaultG: 100, cat: "水果" },
-  { name: "火龙果",     kcal100: 55,  defaultG: 150, cat: "水果" },
-  { name: "芒果",       kcal100: 60,  defaultG: 150, cat: "水果" },
-  { name: "猕猴桃",     kcal100: 61,  defaultG: 100, cat: "水果" },
-  { name: "梨",         kcal100: 57,  defaultG: 150, cat: "水果" },
-  { name: "桃子",       kcal100: 39,  defaultG: 150, cat: "水果" },
-  { name: "樱桃",       kcal100: 50,  defaultG: 100, cat: "水果" },
-  { name: "荔枝",       kcal100: 66,  defaultG: 100, cat: "水果" },
-  { name: "柚子",       kcal100: 38,  defaultG: 100, cat: "水果" },
-  { name: "菠萝",       kcal100: 50,  defaultG: 100, cat: "水果" },
-  { name: "柠檬",       kcal100: 29,  defaultG: 50,  cat: "水果" },
-  // 主食
-  { name: "糙米饭",     kcal100: 111, defaultG: 100, cat: "主食" },
-  { name: "白米饭",     kcal100: 130, defaultG: 100, cat: "主食" },
-  { name: "全麦面包",   kcal100: 250, defaultG: 56,  cat: "主食" },
-  { name: "白面包",     kcal100: 265, defaultG: 56,  cat: "主食" },
-  { name: "燕麦",       kcal100: 389, defaultG: 40,  cat: "主食" },
-  { name: "燕麦粥",     kcal100: 71,  defaultG: 200, cat: "主食" },
-  { name: "藜麦（熟）", kcal100: 120, defaultG: 150, cat: "主食" },
-  { name: "小红薯",     kcal100: 86,  defaultG: 100, cat: "主食" },
-  { name: "紫薯",       kcal100: 90,  defaultG: 100, cat: "主食" },
-  { name: "玉米",       kcal100: 86,  defaultG: 100, cat: "主食" },
-  { name: "面条（熟）", kcal100: 138, defaultG: 150, cat: "主食" },
-  { name: "意面（熟）", kcal100: 158, defaultG: 150, cat: "主食" },
-  { name: "馒头",       kcal100: 223, defaultG: 80,  cat: "主食" },
-  { name: "饺子",       kcal100: 200, defaultG: 100, cat: "主食" },
-  { name: "包子",       kcal100: 230, defaultG: 80,  cat: "主食" },
-  { name: "米粉（熟）", kcal100: 109, defaultG: 150, cat: "主食" },
-  { name: "土豆",       kcal100: 77,  defaultG: 100, cat: "主食" },
-  { name: "南瓜",       kcal100: 26,  defaultG: 100, cat: "主食" },
-  // 蛋白质
-  { name: "鸡胸肉",     kcal100: 165, defaultG: 100, cat: "蛋白质" },
-  { name: "鸡腿肉",     kcal100: 209, defaultG: 100, cat: "蛋白质" },
-  { name: "瘦牛肉",     kcal100: 143, defaultG: 100, cat: "蛋白质" },
-  { name: "牛腩",       kcal100: 332, defaultG: 100, cat: "蛋白质" },
-  { name: "猪里脊",     kcal100: 155, defaultG: 100, cat: "蛋白质" },
-  { name: "五花肉",     kcal100: 395, defaultG: 100, cat: "蛋白质" },
-  { name: "羊肉",       kcal100: 203, defaultG: 100, cat: "蛋白质" },
-  { name: "三文鱼",     kcal100: 208, defaultG: 100, cat: "蛋白质" },
-  { name: "鲫鱼",       kcal100: 108, defaultG: 100, cat: "蛋白质" },
-  { name: "带鱼",       kcal100: 127, defaultG: 100, cat: "蛋白质" },
-  { name: "虾",         kcal100: 99,  defaultG: 100, cat: "蛋白质" },
-  { name: "鸡蛋",       kcal100: 155, defaultG: 50,  cat: "蛋白质" },
-  { name: "鸡蛋白",     kcal100: 52,  defaultG: 90,  cat: "蛋白质" },
-  { name: "鸡蛋黄",     kcal100: 322, defaultG: 17,  cat: "蛋白质" },
-  { name: "豆腐",       kcal100: 76,  defaultG: 150, cat: "蛋白质" },
-  { name: "豆腐干",     kcal100: 140, defaultG: 50,  cat: "蛋白质" },
-  { name: "豆浆",       kcal100: 33,  defaultG: 250, cat: "蛋白质" },
-  { name: "鸭肉",       kcal100: 240, defaultG: 100, cat: "蛋白质" },
-  { name: "金枪鱼罐头", kcal100: 116, defaultG: 85,  cat: "蛋白质" },
-  // 蔬菜
-  { name: "西兰花",     kcal100: 34,  defaultG: 100, cat: "蔬菜" },
-  { name: "彩椒",       kcal100: 31,  defaultG: 80,  cat: "蔬菜" },
-  { name: "洋葱",       kcal100: 40,  defaultG: 75,  cat: "蔬菜" },
-  { name: "生菜",       kcal100: 15,  defaultG: 100, cat: "蔬菜" },
-  { name: "黄瓜",       kcal100: 16,  defaultG: 100, cat: "蔬菜" },
-  { name: "番茄",       kcal100: 18,  defaultG: 100, cat: "蔬菜" },
-  { name: "圣女果",     kcal100: 18,  defaultG: 50,  cat: "蔬菜" },
-  { name: "芦笋",       kcal100: 20,  defaultG: 100, cat: "蔬菜" },
-  { name: "菠菜",       kcal100: 23,  defaultG: 100, cat: "蔬菜" },
-  { name: "西葫芦",     kcal100: 17,  defaultG: 100, cat: "蔬菜" },
-  { name: "蒜苗",       kcal100: 37,  defaultG: 75,  cat: "蔬菜" },
-  { name: "茄子",       kcal100: 25,  defaultG: 100, cat: "蔬菜" },
-  { name: "胡萝卜",     kcal100: 41,  defaultG: 100, cat: "蔬菜" },
-  { name: "白菜",       kcal100: 16,  defaultG: 150, cat: "蔬菜" },
-  { name: "冬瓜",       kcal100: 11,  defaultG: 150, cat: "蔬菜" },
-  { name: "苦瓜",       kcal100: 19,  defaultG: 100, cat: "蔬菜" },
-  { name: "芹菜",       kcal100: 16,  defaultG: 100, cat: "蔬菜" },
-  { name: "蘑菇",       kcal100: 22,  defaultG: 100, cat: "蔬菜" },
-  { name: "香菇",       kcal100: 34,  defaultG: 80,  cat: "蔬菜" },
-  { name: "木耳（泡发）",kcal100: 21, defaultG: 50,  cat: "蔬菜" },
-  { name: "花椰菜",     kcal100: 25,  defaultG: 100, cat: "蔬菜" },
-  { name: "豆芽",       kcal100: 18,  defaultG: 100, cat: "蔬菜" },
-  { name: "韭菜",       kcal100: 26,  defaultG: 100, cat: "蔬菜" },
-  // 乳制品
-  { name: "低脂牛奶",   kcal100: 42,  defaultG: 240, cat: "乳制品" },
-  { name: "全脂牛奶",   kcal100: 61,  defaultG: 240, cat: "乳制品" },
-  { name: "原味酸奶",   kcal100: 63,  defaultG: 150, cat: "乳制品" },
-  { name: "希腊酸奶",   kcal100: 97,  defaultG: 150, cat: "乳制品" },
-  { name: "奶酪",       kcal100: 350, defaultG: 30,  cat: "乳制品" },
-  { name: "淡奶油",     kcal100: 340, defaultG: 15,  cat: "乳制品" },
-  // 坚果
-  { name: "南瓜子",     kcal100: 559, defaultG: 16,  cat: "坚果" },
-  { name: "杏仁",       kcal100: 579, defaultG: 15,  cat: "坚果" },
-  { name: "核桃",       kcal100: 654, defaultG: 15,  cat: "坚果" },
-  { name: "花生",       kcal100: 567, defaultG: 20,  cat: "坚果" },
-  { name: "腰果",       kcal100: 553, defaultG: 15,  cat: "坚果" },
-  { name: "开心果",     kcal100: 562, defaultG: 15,  cat: "坚果" },
-  { name: "松子",       kcal100: 673, defaultG: 10,  cat: "坚果" },
-  { name: "芝麻",       kcal100: 573, defaultG: 10,  cat: "坚果" },
+  { name:"蓝莓",       kcal100:57,  defaultG:100, cat:"水果" },
+  { name:"草莓",       kcal100:32,  defaultG:100, cat:"水果" },
+  { name:"苹果",       kcal100:52,  defaultG:150, cat:"水果" },
+  { name:"香蕉",       kcal100:89,  defaultG:100, cat:"水果" },
+  { name:"橙子",       kcal100:47,  defaultG:150, cat:"水果" },
+  { name:"葡萄",       kcal100:67,  defaultG:100, cat:"水果" },
+  { name:"西瓜",       kcal100:30,  defaultG:200, cat:"水果" },
+  { name:"橘子",       kcal100:44,  defaultG:100, cat:"水果" },
+  { name:"火龙果",     kcal100:55,  defaultG:150, cat:"水果" },
+  { name:"芒果",       kcal100:60,  defaultG:150, cat:"水果" },
+  { name:"猕猴桃",     kcal100:61,  defaultG:100, cat:"水果" },
+  { name:"梨",         kcal100:57,  defaultG:150, cat:"水果" },
+  { name:"桃子",       kcal100:39,  defaultG:150, cat:"水果" },
+  { name:"樱桃",       kcal100:50,  defaultG:100, cat:"水果" },
+  { name:"荔枝",       kcal100:66,  defaultG:100, cat:"水果" },
+  { name:"柚子",       kcal100:38,  defaultG:100, cat:"水果" },
+  { name:"菠萝",       kcal100:50,  defaultG:100, cat:"水果" },
+  { name:"柠檬",       kcal100:29,  defaultG:50,  cat:"水果" },
+  { name:"糙米饭",     kcal100:111, defaultG:100, cat:"主食" },
+  { name:"白米饭",     kcal100:130, defaultG:100, cat:"主食" },
+  { name:"全麦面包",   kcal100:250, defaultG:56,  cat:"主食" },
+  { name:"白面包",     kcal100:265, defaultG:56,  cat:"主食" },
+  { name:"燕麦",       kcal100:389, defaultG:40,  cat:"主食" },
+  { name:"燕麦粥",     kcal100:71,  defaultG:200, cat:"主食" },
+  { name:"藜麦（熟）", kcal100:120, defaultG:150, cat:"主食" },
+  { name:"小红薯",     kcal100:86,  defaultG:100, cat:"主食" },
+  { name:"紫薯",       kcal100:90,  defaultG:100, cat:"主食" },
+  { name:"玉米",       kcal100:86,  defaultG:100, cat:"主食" },
+  { name:"面条（熟）", kcal100:138, defaultG:150, cat:"主食" },
+  { name:"意面（熟）", kcal100:158, defaultG:150, cat:"主食" },
+  { name:"馒头",       kcal100:223, defaultG:80,  cat:"主食" },
+  { name:"饺子",       kcal100:200, defaultG:100, cat:"主食" },
+  { name:"包子",       kcal100:230, defaultG:80,  cat:"主食" },
+  { name:"米粉（熟）", kcal100:109, defaultG:150, cat:"主食" },
+  { name:"土豆",       kcal100:77,  defaultG:100, cat:"主食" },
+  { name:"南瓜",       kcal100:26,  defaultG:100, cat:"主食" },
+  { name:"鸡胸肉",     kcal100:165, defaultG:100, cat:"蛋白质" },
+  { name:"鸡腿肉",     kcal100:209, defaultG:100, cat:"蛋白质" },
+  { name:"瘦牛肉",     kcal100:143, defaultG:100, cat:"蛋白质" },
+  { name:"牛腩",       kcal100:332, defaultG:100, cat:"蛋白质" },
+  { name:"猪里脊",     kcal100:155, defaultG:100, cat:"蛋白质" },
+  { name:"五花肉",     kcal100:395, defaultG:100, cat:"蛋白质" },
+  { name:"羊肉",       kcal100:203, defaultG:100, cat:"蛋白质" },
+  { name:"三文鱼",     kcal100:208, defaultG:100, cat:"蛋白质" },
+  { name:"鲫鱼",       kcal100:108, defaultG:100, cat:"蛋白质" },
+  { name:"带鱼",       kcal100:127, defaultG:100, cat:"蛋白质" },
+  { name:"虾",         kcal100:99,  defaultG:100, cat:"蛋白质" },
+  { name:"鸡蛋",       kcal100:155, defaultG:50,  cat:"蛋白质" },
+  { name:"鸡蛋白",     kcal100:52,  defaultG:90,  cat:"蛋白质" },
+  { name:"鸡蛋黄",     kcal100:322, defaultG:17,  cat:"蛋白质" },
+  { name:"豆腐",       kcal100:76,  defaultG:150, cat:"蛋白质" },
+  { name:"豆腐干",     kcal100:140, defaultG:50,  cat:"蛋白质" },
+  { name:"豆浆",       kcal100:33,  defaultG:250, cat:"蛋白质" },
+  { name:"鸭肉",       kcal100:240, defaultG:100, cat:"蛋白质" },
+  { name:"金枪鱼罐头", kcal100:116, defaultG:85,  cat:"蛋白质" },
+  { name:"西兰花",     kcal100:34,  defaultG:100, cat:"蔬菜" },
+  { name:"彩椒",       kcal100:31,  defaultG:80,  cat:"蔬菜" },
+  { name:"洋葱",       kcal100:40,  defaultG:75,  cat:"蔬菜" },
+  { name:"生菜",       kcal100:15,  defaultG:100, cat:"蔬菜" },
+  { name:"黄瓜",       kcal100:16,  defaultG:100, cat:"蔬菜" },
+  { name:"番茄",       kcal100:18,  defaultG:100, cat:"蔬菜" },
+  { name:"圣女果",     kcal100:18,  defaultG:50,  cat:"蔬菜" },
+  { name:"芦笋",       kcal100:20,  defaultG:100, cat:"蔬菜" },
+  { name:"菠菜",       kcal100:23,  defaultG:100, cat:"蔬菜" },
+  { name:"西葫芦",     kcal100:17,  defaultG:100, cat:"蔬菜" },
+  { name:"蒜苗",       kcal100:37,  defaultG:75,  cat:"蔬菜" },
+  { name:"茄子",       kcal100:25,  defaultG:100, cat:"蔬菜" },
+  { name:"胡萝卜",     kcal100:41,  defaultG:100, cat:"蔬菜" },
+  { name:"白菜",       kcal100:16,  defaultG:150, cat:"蔬菜" },
+  { name:"冬瓜",       kcal100:11,  defaultG:150, cat:"蔬菜" },
+  { name:"苦瓜",       kcal100:19,  defaultG:100, cat:"蔬菜" },
+  { name:"芹菜",       kcal100:16,  defaultG:100, cat:"蔬菜" },
+  { name:"蘑菇",       kcal100:22,  defaultG:100, cat:"蔬菜" },
+  { name:"香菇",       kcal100:34,  defaultG:80,  cat:"蔬菜" },
+  { name:"木耳（泡发）",kcal100:21, defaultG:50,  cat:"蔬菜" },
+  { name:"花椰菜",     kcal100:25,  defaultG:100, cat:"蔬菜" },
+  { name:"豆芽",       kcal100:18,  defaultG:100, cat:"蔬菜" },
+  { name:"韭菜",       kcal100:26,  defaultG:100, cat:"蔬菜" },
+  { name:"低脂牛奶",   kcal100:42,  defaultG:240, cat:"乳制品" },
+  { name:"全脂牛奶",   kcal100:61,  defaultG:240, cat:"乳制品" },
+  { name:"原味酸奶",   kcal100:63,  defaultG:150, cat:"乳制品" },
+  { name:"希腊酸奶",   kcal100:97,  defaultG:150, cat:"乳制品" },
+  { name:"奶酪",       kcal100:350, defaultG:30,  cat:"乳制品" },
+  { name:"淡奶油",     kcal100:340, defaultG:15,  cat:"乳制品" },
+  { name:"南瓜子",     kcal100:559, defaultG:16,  cat:"坚果" },
+  { name:"杏仁",       kcal100:579, defaultG:15,  cat:"坚果" },
+  { name:"核桃",       kcal100:654, defaultG:15,  cat:"坚果" },
+  { name:"花生",       kcal100:567, defaultG:20,  cat:"坚果" },
+  { name:"腰果",       kcal100:553, defaultG:15,  cat:"坚果" },
+  { name:"开心果",     kcal100:562, defaultG:15,  cat:"坚果" },
+  { name:"松子",       kcal100:673, defaultG:10,  cat:"坚果" },
+  { name:"芝麻",       kcal100:573, defaultG:10,  cat:"坚果" },
 ];
 
-const MEALS = [
-  { id: "breakfast", emoji: "🌅", name: "早餐",   color: "#2c5f3f", ratio: 0.25 },
-  { id: "lunch",     emoji: "☀️", name: "午餐",   color: "#4a8a62", ratio: 0.35 },
-  { id: "dinner",    emoji: "🌿", name: "晚餐",   color: "#d4623a", ratio: 0.30 },
-  { id: "snack",     emoji: "🍊", name: "加餐",   color: "#c9963a", ratio: 0.10 },
+const POPULAR_FOODS = ["鸡胸肉","白米饭","鸡蛋","西兰花","苹果","糙米饭","番茄","豆腐","香蕉","燕麦","低脂牛奶","黄瓜"];
+
+// Time block labels for summary grouping
+const TIME_BLOCKS = [
+  { label:"早餐", emoji:"🌅", from:5,  to:10, color:"#2c5f3f" },
+  { label:"午餐", emoji:"☀️", from:10, to:15, color:"#4a8a62" },
+  { label:"下午", emoji:"🍊", from:15, to:18, color:"#c9963a" },
+  { label:"晚餐", emoji:"🌿", from:18, to:22, color:"#d4623a" },
+  { label:"夜间", emoji:"🌙", from:22, to:29, color:"#94a3b8" }, // 29 = next 5am
 ];
 
-// ══════════════════════════════════════
-//  DATE HELPERS
-// ══════════════════════════════════════
-function todayKey() {
-  return new Date().toISOString().slice(0, 10); // "2026-04-07"
+// ══════════════════════════════════
+//  DATE / TIME HELPERS
+// ══════════════════════════════════
+function todayKey() { return new Date().toISOString().slice(0, 10); }
+function nowTime() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
-
 function formatDate(key) {
   const d = new Date(key + 'T00:00:00');
   const days = ['周日','周一','周二','周三','周四','周五','周六'];
   return `${d.getMonth()+1}月${d.getDate()}日 ${days[d.getDay()]}`;
 }
-
 function formatDateFull(key) {
   const d = new Date(key + 'T00:00:00');
   const days = ['周日','周一','周二','周三','周四','周五','周六'];
   return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 ${days[d.getDay()]}`;
 }
+function timeHour(t) { return t ? parseInt(t.split(':')[0]) : 12; }
 
-// ══════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════
-let state = {
-  target: 1478,
-  meals: { breakfast: [], lunch: [], dinner: [], snack: [] },
-};
-
-// ── Storage helpers ──
-function getHistoryDates() {
-  try { return JSON.parse(localStorage.getItem('kcal_dates') || '[]'); }
-  catch(e) { return []; }
+function timeBlockFor(time) {
+  const h = timeHour(time);
+  const adj = h < 5 ? h + 24 : h; // treat 00-04 as "after midnight"
+  return TIME_BLOCKS.find(b => adj >= b.from && adj < b.to) || TIME_BLOCKS[3];
 }
 
+// ══════════════════════════════════
+//  STATE
+// ══════════════════════════════════
+// Each entry: { name, grams, kcal100, kcal, time }  e.g. time = "07:32"
+let state = { target: 1478, entries: [] };
+
+function getHistoryDates() {
+  try { return JSON.parse(localStorage.getItem('kcal_dates') || '[]'); } catch(e) { return []; }
+}
 function saveToday() {
   const key = todayKey();
-  localStorage.setItem('kcal_day_' + key, JSON.stringify({ target: state.target, meals: state.meals }));
-  // update index
+  localStorage.setItem('kcal_day_' + key, JSON.stringify({ target: state.target, entries: state.entries }));
   const dates = getHistoryDates();
-  if (!dates.includes(key)) {
-    dates.push(key);
-    localStorage.setItem('kcal_dates', JSON.stringify(dates));
-  }
-  // persist target separately for cross-day carry
+  if (!dates.includes(key)) { dates.push(key); localStorage.setItem('kcal_dates', JSON.stringify(dates)); }
   localStorage.setItem('kcal_target', state.target);
 }
-
 function loadToday() {
   const key = todayKey();
   try {
     const saved = localStorage.getItem('kcal_day_' + key);
     if (saved) {
       const d = JSON.parse(saved);
-      state = { target: d.target || 1478, meals: d.meals || { breakfast:[], lunch:[], dinner:[], snack:[] } };
+      // Support old format (meals object) → migrate to flat entries
+      if (d.meals && !d.entries) {
+        const migrated = [];
+        const timeMap = { breakfast:'07:00', lunch:'12:00', dinner:'18:00', snack:'15:00' };
+        Object.entries(d.meals).forEach(([mealId, foods]) => {
+          foods.forEach(f => migrated.push({ ...f, time: timeMap[mealId] || '12:00' }));
+        });
+        state = { target: d.target || 1478, entries: migrated };
+      } else {
+        state = { target: d.target || 1478, entries: d.entries || [] };
+      }
       return;
     }
   } catch(e) {}
-  // New day: carry over target from last session
   const savedTarget = parseInt(localStorage.getItem('kcal_target'));
   if (savedTarget) state.target = savedTarget;
 }
-
 function getDayData(key) {
-  try { return JSON.parse(localStorage.getItem('kcal_day_' + key) || 'null'); }
-  catch(e) { return null; }
+  try { return JSON.parse(localStorage.getItem('kcal_day_' + key) || 'null'); } catch(e) { return null; }
 }
-
 function deleteDayHistory(key) {
   localStorage.removeItem('kcal_day_' + key);
   const dates = getHistoryDates().filter(d => d !== key);
   localStorage.setItem('kcal_dates', JSON.stringify(dates));
 }
 
-function save() { saveToday(); }
-
-// ══════════════════════════════════════
+// ══════════════════════════════════
 //  CALC
-// ══════════════════════════════════════
-function mealTotal(mealId) {
-  return state.meals[mealId].reduce((s, f) => s + f.kcal, 0);
-}
-function dayTotal() {
-  return MEALS.reduce((s, m) => s + mealTotal(m.id), 0);
-}
-function mealTarget(m) {
-  return Math.round(state.target * m.ratio);
-}
+// ══════════════════════════════════
+function dayTotal() { return state.entries.reduce((s,e) => s + e.kcal, 0); }
 function dayTotalForKey(key) {
   const d = getDayData(key);
   if (!d) return 0;
-  return MEALS.reduce((s, m) => {
-    return s + (d.meals[m.id] || []).reduce((ss, f) => ss + f.kcal, 0);
-  }, 0);
+  // Support both new entries[] and old meals{} format
+  if (d.entries) return d.entries.reduce((s,e) => s + e.kcal, 0);
+  if (d.meals) return Object.values(d.meals).flat().reduce((s,f) => s + f.kcal, 0);
+  return 0;
 }
 
-// ══════════════════════════════════════
+// ══════════════════════════════════
 //  RENDER
-// ══════════════════════════════════════
+// ══════════════════════════════════
 function render() {
-  renderMeals();
   renderTopBar();
+  renderFeed();
   renderSummary();
   renderHistory();
-  save();
+  saveToday();
 }
 
 function renderTopBar() {
@@ -561,108 +541,92 @@ function renderTopBar() {
   const rem = state.target - total;
   document.getElementById("remainLabel").innerHTML =
     rem >= 0 ? `剩余 <strong>${rem}</strong> 千卡` : `超出 <strong>${-rem}</strong> 千卡`;
-  MEALS.forEach((m, i) => {
-    document.getElementById("s" + i).textContent = mealTotal(m.id);
-  });
+  document.getElementById("barCount").textContent = `今日 ${state.entries.length} 条记录`;
   document.getElementById("targetInput").value = state.target;
 }
 
-function renderMeals() {
-  const grid = document.getElementById("mealsGrid");
-  grid.innerHTML = "";
-  MEALS.forEach(m => {
-    const total = mealTotal(m.id);
-    const target = mealTarget(m);
-    const pct = Math.min(100, (total / Math.max(target, 1)) * 100);
-    const status = total > target * 1.15 ? "over" : total > target * 0.9 ? "warn" : "";
-    const card = document.createElement("div");
-    card.className = "meal-card";
-    card.innerHTML = `
-      <div class="meal-card-head">
-        <div class="meal-title">
-          <span class="meal-emoji">${m.emoji}</span>
-          <div>
-            <div class="meal-name">${m.name}</div>
-            <div class="meal-target-label">目标 ~${target} 千卡</div>
-          </div>
-        </div>
-        <div class="meal-total ${status}">${total} <span style="font-size:.7rem;font-weight:400;opacity:.7">千卡</span></div>
-      </div>
-      <div class="meal-mini-bar">
-        <div class="meal-mini-fill ${status}" style="width:${pct}%"></div>
-      </div>
-      <div class="food-list" id="list-${m.id}">${renderFoodList(m.id)}</div>
-      <div class="add-area">
-        <div class="add-row">
-          <div class="search-wrap">
-            <input class="food-search" id="search-${m.id}" placeholder="搜索或输入食物…" autocomplete="off"
-              oninput="onSearch(event,'${m.id}')"
-              onkeydown="onSearchKey(event,'${m.id}')"
-              onfocus="onFocus('${m.id}')" />
-            <div class="autocomplete" id="ac-${m.id}" style="display:none"></div>
-          </div>
-          <div class="gram-wrap">
-            <input class="gram-input" id="gram-${m.id}" type="number" value="100" min="1" max="2000" />
-            <span class="gram-unit">克</span>
-          </div>
-          <button class="add-btn" onclick="addCustom('${m.id}')">添加</button>
-        </div>
-        <div id="custom-kcal-row-${m.id}" style="display:none" class="custom-kcal-row">
-          <span class="custom-label">自定义热量：</span>
-          <input class="custom-kcal-input" id="custom-kcal-${m.id}" type="number" placeholder="千卡 / 100g" min="0" max="900" />
-          <button class="custom-add-btn" onclick="addCustomConfirm('${m.id}')">确认添加</button>
-        </div>
-      </div>`;
-    grid.appendChild(card);
-  });
-  document.addEventListener("click", e => {
-    MEALS.forEach(m => {
-      const ac = document.getElementById("ac-" + m.id);
-      if (ac && !ac.contains(e.target) && e.target.id !== "search-" + m.id) ac.style.display = "none";
-    });
-  });
-}
+function renderFeed() {
+  const list = document.getElementById("feedList");
+  const total = dayTotal();
 
-function renderFoodList(mealId) {
-  const items = state.meals[mealId];
-  if (!items.length) return `<div class="food-empty">尚未添加食物</div>`;
-  return items.map((f, i) => `
-    <div class="food-item">
-      <span class="food-item-name">${f.name}</span>
-      <div class="food-item-g-wrap">
-        <input class="food-item-g" type="number" value="${f.grams}" min="1" max="2000"
-          onchange="updateGrams('${mealId}',${i},this.value)" />
-        <span class="food-item-g-unit">克</span>
-      </div>
-      <span class="food-item-kcal">${f.kcal}</span>
-      <button class="food-del" onclick="removeFood('${mealId}',${i})" title="删除">×</button>
-    </div>`).join("");
+  // Update header total
+  const ft = document.getElementById("feedTotal");
+  const pct = total / state.target;
+  ft.className = "feed-total" + (pct > 1.05 ? " over" : pct > 0.9 ? " warn" : "");
+  ft.innerHTML = `${total} <span style="font-size:.7rem;font-weight:400;opacity:.7">千卡</span>`;
+
+  if (!state.entries.length) {
+    list.innerHTML = `<div class="feed-empty">今日还没有记录 — 添加第一条吧 🍽</div>`;
+    return;
+  }
+
+  // Group entries by hour
+  const groups = {};
+  state.entries.forEach((e, i) => {
+    const h = timeHour(e.time);
+    const label = `${String(h).padStart(2,'0')}:00 — ${String(h+1).padStart(2,'0')}:00`;
+    if (!groups[label]) groups[label] = [];
+    groups[label].push({ ...e, idx: i });
+  });
+
+  list.innerHTML = Object.entries(groups).map(([label, items]) => {
+    const groupKcal = items.reduce((s,e) => s+e.kcal, 0);
+    return `
+      <div class="feed-group-header">${label} <span style="font-family:'Lora',serif;color:var(--ember);margin-left:4px">${groupKcal}千卡</span></div>
+      ${items.map(e => `
+        <div class="entry-row">
+          <span class="entry-time">${e.time}</span>
+          <span class="entry-name">${e.name}</span>
+          <div class="entry-g-wrap">
+            <input class="entry-g" type="number" value="${e.grams}" min="1" max="2000"
+              onchange="updateGrams(${e.idx}, this.value)" />
+            <span class="entry-g-unit">克</span>
+          </div>
+          <span class="entry-kcal" id="ekcal-${e.idx}">${e.kcal}</span>
+          <button class="entry-del" onclick="removeEntry(${e.idx})" title="删除">×</button>
+        </div>`).join("")}`;
+  }).join("");
 }
 
 function renderSummary() {
   const total = dayTotal();
   const rows = document.getElementById("summaryRows");
-  rows.innerHTML = MEALS.map(m => {
-    const t = mealTotal(m.id);
-    const pct = total > 0 ? Math.round(t / total * 100) : 0;
-    return `<div class="summary-row">
-      <div class="summary-meal"><span class="s-dot" style="background:${m.color}"></span>${m.emoji} ${m.name}</div>
-      <div><span class="summary-val">${t}</span> <span class="summary-pct">千卡 ${total > 0 ? `(${pct}%)` : ""}</span></div>
+
+  // Group by time block
+  const blockTotals = TIME_BLOCKS.map(b => ({
+    ...b,
+    kcal: state.entries.filter(e => {
+      const h = timeHour(e.time);
+      const adj = h < 5 ? h + 24 : h;
+      return adj >= b.from && adj < b.to;
+    }).reduce((s,e) => s + e.kcal, 0)
+  })).filter(b => b.kcal > 0);
+
+  if (blockTotals.length === 0) {
+    rows.innerHTML = `<div class="summary-row"><span class="summary-label" style="font-style:italic;color:var(--mist)">今日暂无记录</span></div>`;
+  } else {
+    rows.innerHTML = blockTotals.map(b => {
+      const pct = total > 0 ? Math.round(b.kcal / total * 100) : 0;
+      return `<div class="summary-row">
+        <span class="summary-label"><span class="s-dot" style="background:${b.color}"></span>${b.emoji} ${b.label}</span>
+        <div><span class="summary-val">${b.kcal}</span><span class="summary-pct">千卡 (${pct}%)</span></div>
+      </div>`;
+    }).join("") + `<div class="summary-row">
+      <span class="summary-label"><span class="s-dot" style="background:var(--ink)"></span>全天合计</span>
+      <div><span class="summary-val">${total}</span><span class="summary-pct">/ ${state.target} 千卡</span></div>
     </div>`;
-  }).join("") + `<div class="summary-row">
-    <div class="summary-meal"><span class="s-dot" style="background:#1c1812"></span>全天合计</div>
-    <div><span class="summary-val">${total}</span> <span class="summary-pct">/ ${state.target} 千卡</span></div>
-  </div>`;
+  }
+
   const rem = state.target - total;
   const remEl = document.getElementById("summaryRemaining");
   if (total === 0) { remEl.className = "summary-remaining ok"; remEl.textContent = "尚未添加任何食物"; }
-  else if (rem > 0) { const pct = Math.round(total / state.target * 100); remEl.className = "summary-remaining " + (pct > 85 ? "warn" : "ok"); remEl.textContent = `还可以摄入 ${rem} 千卡（已达成 ${pct}%）`; }
+  else if (rem > 0) { const p = Math.round(total/state.target*100); remEl.className = "summary-remaining "+(p>85?"warn":"ok"); remEl.textContent = `还可以摄入 ${rem} 千卡（已达成 ${p}%）`; }
   else { remEl.className = "summary-remaining over"; remEl.textContent = `今日已超出目标 ${-rem} 千卡`; }
 }
 
-// ══════════════════════════════════════
-//  HISTORY RENDER
-// ══════════════════════════════════════
+// ══════════════════════════════════
+//  HISTORY
+// ══════════════════════════════════
 let historyOpen = false;
 let expandedRows = new Set();
 
@@ -673,27 +637,19 @@ function toggleHistory() {
 }
 
 function renderHistory() {
-  const allDates = getHistoryDates().sort().reverse(); // newest first
+  const allDates = getHistoryDates().sort().reverse();
   const today = todayKey();
   const pastDates = allDates.filter(d => d !== today);
-
-  // count badge (include today if has data)
-  const totalDays = allDates.length;
-  document.getElementById("histCount").textContent = totalDays + " 天";
-
-  // sparkline: last 14 days (including today)
+  document.getElementById("histCount").textContent = allDates.length + " 天";
   renderSparkline(allDates.slice(0, 14).reverse());
 
   const list = document.getElementById("historyList");
-  if (!pastDates.length) {
-    list.innerHTML = `<div class="hist-empty">暂无历史记录 — 明天继续加油 💪</div>`;
-    return;
-  }
+  if (!pastDates.length) { list.innerHTML = `<div class="hist-empty">暂无历史记录 — 明天继续加油 💪</div>`; return; }
 
   list.innerHTML = pastDates.map(key => {
     const d = getDayData(key);
     if (!d) return "";
-    const total = MEALS.reduce((s, m) => s + (d.meals[m.id]||[]).reduce((ss,f)=>ss+f.kcal,0), 0);
+    const total = dayTotalForKey(key);
     const target = d.target || 1478;
     const pct = Math.min(100, Math.round(total / target * 100));
     const isOver = total > target * 1.05;
@@ -702,416 +658,346 @@ function renderHistory() {
     const barColor = isOver ? "#d4623a" : isWarn ? "#c9963a" : "#7aab8a";
     const isExpanded = expandedRows.has(key);
 
-    // build detail
-    const detailHtml = MEALS.map(m => {
-      const foods = (d.meals[m.id] || []);
-      if (!foods.length) return "";
-      return `<div class="hist-detail-meal">
-        <div class="hist-detail-meal-title">${m.emoji} ${m.name}</div>
-        ${foods.map(f => `<div class="hist-detail-food">
-          <span>${f.name} <span style="opacity:.5;font-size:.78rem">${f.grams}克</span></span>
-          <span class="hist-detail-food-kcal">${f.kcal}</span>
-        </div>`).join("")}
-      </div>`;
-    }).join("");
+    // Get entries (support old meals format too)
+    let entries = [];
+    if (d.entries) entries = d.entries;
+    else if (d.meals) {
+      const timeMap = { breakfast:'07:00', lunch:'12:00', dinner:'18:00', snack:'15:00' };
+      Object.entries(d.meals).forEach(([mealId, foods]) => {
+        foods.forEach(f => entries.push({ ...f, time: timeMap[mealId] || '12:00' }));
+      });
+    }
+    entries.sort((a,b) => (a.time||'').localeCompare(b.time||''));
+
+    const detailHtml = entries.map(e => `
+      <div class="hist-detail-entry">
+        <span class="hist-detail-time">${e.time || ''}</span>
+        <span style="flex:1">${e.name} <span style="opacity:.5;font-size:.75rem">${e.grams}克</span></span>
+        <span class="hist-detail-kcal">${e.kcal}</span>
+      </div>`).join("");
 
     return `<div class="hist-row">
       <div class="hist-row-main" onclick="toggleHistRow('${key}')">
         <span class="hist-dot" style="background:${dotColor}"></span>
         <span class="hist-date">${formatDate(key)}<span class="hist-date-sub">${key}</span></span>
         <div class="hist-bar-wrap">
-          <div class="hist-bar-track">
-            <div class="hist-bar-fill" style="width:${pct}%;background:${barColor}"></div>
-          </div>
+          <div class="hist-bar-track"><div class="hist-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
           <div class="hist-bar-labels"><span>${pct}%</span><span>目标 ${target}</span></div>
         </div>
         <span class="hist-kcal" style="color:${dotColor}">${total}</span>
-        <span class="hist-expand-icon ${isExpanded ? 'open' : ''}">▶</span>
-        <button class="hist-del" onclick="event.stopPropagation();deleteDay('${key}')" title="删除此日记录">🗑</button>
+        <span class="hist-expand-icon ${isExpanded?'open':''}">▶</span>
+        <button class="hist-del" onclick="event.stopPropagation();deleteDay('${key}')" title="删除">🗑</button>
       </div>
-      <div class="hist-detail ${isExpanded ? 'open' : ''}" id="histdetail-${key}">
-        ${detailHtml || '<div style="color:var(--mist);font-size:.82rem;padding:8px 0">无食物记录</div>'}
+      <div class="hist-detail ${isExpanded?'open':''}" id="histdetail-${key}">
+        ${detailHtml || '<div style="color:var(--mist);font-size:.82rem;padding:8px 0">无记录</div>'}
       </div>
     </div>`;
   }).join("");
 }
 
 function toggleHistRow(key) {
-  if (expandedRows.has(key)) expandedRows.delete(key);
-  else expandedRows.add(key);
+  if (expandedRows.has(key)) expandedRows.delete(key); else expandedRows.add(key);
   renderHistory();
 }
-
 function deleteDay(key) {
   if (!confirm(`确认删除 ${formatDate(key)} 的记录？`)) return;
-  expandedRows.delete(key);
-  deleteDayHistory(key);
-  renderHistory();
+  expandedRows.delete(key); deleteDayHistory(key); renderHistory();
 }
 
-// ── Sparkline ──
 function renderSparkline(dates) {
-  if (!dates.length) { document.getElementById("sparklineWrap").style.display = "none"; return; }
-  document.getElementById("sparklineWrap").style.display = "block";
-  const W = 600, H = 52, PAD = 6;
+  const wrap = document.getElementById("sparklineWrap");
+  if (!dates.length) { wrap.style.display = "none"; return; }
+  wrap.style.display = "block";
+  const W=600, H=52, PAD=6;
   const vals = dates.map(k => dayTotalForKey(k));
   const maxV = Math.max(...vals, 100);
-  const minV = 0;
-  const pts = vals.map((v, i) => {
-    const x = PAD + (i / Math.max(vals.length - 1, 1)) * (W - PAD * 2);
-    const y = PAD + (1 - (v - minV) / (maxV - minV)) * (H - PAD * 2);
-    return [x, y];
+  const pts = vals.map((v,i) => {
+    const x = PAD + (i/Math.max(vals.length-1,1))*(W-PAD*2);
+    const y = PAD + (1-v/maxV)*(H-PAD*2);
+    return [x,y];
   });
-  const polyPts = pts.map(p => p.join(",")).join(" ");
-  const areaPath = `M${pts[0][0]},${H} ` + pts.map(p => `L${p[0]},${p[1]}`).join(" ") + ` L${pts[pts.length-1][0]},${H} Z`;
-
-  const dots = pts.map((p, i) => {
+  const areaPath = `M${pts[0][0]},${H} `+pts.map(p=>`L${p[0]},${p[1]}`).join(" ")+` L${pts[pts.length-1][0]},${H} Z`;
+  const dots = pts.map((p,i) => {
     const v = vals[i];
-    const tgt = (() => { const d = getDayData(dates[i]); return d ? d.target || 1478 : 1478; })();
-    const cls = v > tgt * 1.05 ? "spark-dot-over" : v > tgt * 0.9 ? "spark-dot-warn" : "spark-dot";
-    const label = dates[i] === todayKey() ? "今天" : `${new Date(dates[i]+'T00:00:00').getMonth()+1}/${new Date(dates[i]+'T00:00:00').getDate()}`;
-    return `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" class="${cls}">
-      <title>${label}: ${v}千卡</title>
-    </circle>`;
+    const tgt = (() => { const d=getDayData(dates[i]); return d?d.target||1478:1478; })();
+    const cls = v>tgt*1.05?"spark-dot-over":v>tgt*0.9?"spark-dot-warn":"spark-dot";
+    const lbl = dates[i]===todayKey()?"今天":`${new Date(dates[i]+'T00:00:00').getMonth()+1}/${new Date(dates[i]+'T00:00:00').getDate()}`;
+    return `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" class="${cls}"><title>${lbl}: ${v}千卡</title></circle>`;
   }).join("");
-
-  document.getElementById("sparklineWrap").innerHTML = `
+  wrap.innerHTML = `
     <div class="sparkline-label">近 ${dates.length} 天热量趋势</div>
     <svg class="sparkline-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#7aab8a"/>
-          <stop offset="100%" stop-color="#7aab8a" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
+      <defs><linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#7aab8a"/>
+        <stop offset="100%" stop-color="#7aab8a" stop-opacity="0"/>
+      </linearGradient></defs>
       <path class="spark-area" d="${areaPath}"/>
-      <polyline class="spark-line" points="${polyPts}"/>
+      <polyline class="spark-line" points="${pts.map(p=>p.join(",")).join(" ")}"/>
       ${dots}
     </svg>`;
 }
 
-// ══════════════════════════════════════
-//  FOOD SEARCH (local + online)
-// ══════════════════════════════════════
-let acSelected = {};
-let searchTimers = {};
-// Cache search state per meal: { q, local, online, loading }
-let acState = {};
+// ══════════════════════════════════
+//  SEARCH
+// ══════════════════════════════════
+let acState = { q: null, local: [], online: null, loading: false };
+let searchTimer = null;
+let acSelectedIdx = -1;
 
-const POPULAR_FOODS = ["鸡胸肉","白米饭","鸡蛋","西兰花","苹果","糙米饭","番茄","豆腐","香蕉","燕麦","黄瓜","低脂牛奶"];
-
-// Called when field is focused
-function onFocus(mealId) {
-  const searchEl = document.getElementById("search-" + mealId);
-  const q = (searchEl?.value || "").trim();
+function onFocus() {
+  const q = (document.getElementById("mainSearch")?.value || "").trim();
   if (q) {
-    // Re-show cached results (or re-trigger search if not cached)
-    const st = acState[mealId];
-    if (st && st.q === q) {
-      renderAcList(mealId, q, st.local, st.loading ? null : (st.online || []), false);
+    if (acState.q === q) {
+      renderAcList(q, acState.local, acState.loading ? null : (acState.online || []), false);
     } else {
-      onSearch({ target: searchEl }, mealId);
+      onSearch({ target: document.getElementById("mainSearch") });
     }
   } else {
-    // Show popular foods when field is empty
-    showPopular(mealId);
+    showPopular();
   }
 }
 
-function showPopular(mealId) {
-  const ac = document.getElementById("ac-" + mealId);
-  if (!ac) return;
-  const grams = parseInt(document.getElementById("gram-" + mealId)?.value) || 100;
+function showPopular() {
+  const ac = document.getElementById("mainAc");
+  const grams = parseInt(document.getElementById("mainGram")?.value) || 100;
   let html = `<div class="ac-divider">常用食物</div>`;
   POPULAR_FOODS.forEach(name => {
     const f = FOOD_DB.find(x => x.name === name);
     if (!f) return;
     const kcal = Math.round(f.kcal100 * grams / 100);
-    html += `<div class="ac-item" onmousedown="selectAcItem(event,'${mealId}','${f.name}',${f.kcal100})">
-      <span>${f.name}</span>
-      <span class="ac-kcal">${kcal}千卡 / ${grams}g</span>
-    </div>`;
+    html += `<div class="ac-item" onmousedown="selectAcItem(event,'${f.name}',${f.kcal100})">
+      <span>${f.name}</span><span class="ac-kcal">${kcal}千卡 / ${grams}g</span></div>`;
   });
-  ac.innerHTML = html;
-  ac.style.display = "block";
+  ac.innerHTML = html; ac.style.display = "block";
 }
 
-// Called on every keystroke
-function onSearch(e, mealId) {
+function onSearch(e) {
   const q = e.target.value.trim();
-  document.getElementById("custom-kcal-row-" + mealId).style.display = "none";
-  acSelected[mealId] = -1;
-
-  if (!q) { showPopular(mealId); return; }
-
-  // 1. Instant local results
-  const local = FOOD_DB.filter(f => f.name.includes(q) || q.includes(f.name.slice(0, 2)));
-  acState[mealId] = { q, local, online: null, loading: true };
-  renderAcList(mealId, q, local, null, false);
-
-  // 2. Debounced online search
-  clearTimeout(searchTimers[mealId]);
-  searchTimers[mealId] = setTimeout(() => fetchOnlineCalories(q, mealId, local), 600);
+  document.getElementById("customKcalRow").style.display = "none";
+  acSelectedIdx = -1;
+  if (!q) { showPopular(); return; }
+  const local = FOOD_DB.filter(f => f.name.includes(q) || q.includes(f.name.slice(0,2)));
+  acState = { q, local, online: null, loading: true };
+  renderAcList(q, local, null, false);
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => fetchOnlineCalories(q, local), 600);
 }
 
-// Render autocomplete dropdown
-// warnMode: true = show "please select first" banner at top
-function renderAcList(mealId, q, local, online, warnMode) {
-  const ac = document.getElementById("ac-" + mealId);
+function renderAcList(q, local, online, warnMode) {
+  const ac = document.getElementById("mainAc");
   if (!ac) return;
-  const grams = parseInt(document.getElementById("gram-" + mealId)?.value) || 100;
+  const grams = parseInt(document.getElementById("mainGram")?.value) || 100;
   let html = "";
-
-  // Warning banner when user tried to Add without selecting
   if (warnMode) {
-    const msg = online && online.length > 1
-      ? "⚠️ 找到多种热量数值，请选择其中一个："
-      : "⚠️ 请先从下方点击选择食物和热量：";
+    const msg = online && online.length > 1 ? "⚠️ 找到多种热量数值，请选择其中一个：" : "⚠️ 请先从下方选择食物和热量：";
     html += `<div class="ac-warn-banner">${msg}</div>`;
   }
-
-  // Local results grouped by category
   if (local.length) {
     const cats = [...new Set(local.map(f => f.cat))];
     cats.forEach(cat => {
       html += `<div class="ac-divider">${cat}</div>`;
       local.filter(f => f.cat === cat).forEach(f => {
         const kcal = Math.round(f.kcal100 * grams / 100);
-        html += `<div class="ac-item" onmousedown="selectAcItem(event,'${mealId}','${f.name}',${f.kcal100})">
-          <span>${f.name}</span>
-          <span class="ac-kcal">${kcal}千卡 / ${grams}g</span>
-        </div>`;
+        html += `<div class="ac-item" onmousedown="selectAcItem(event,'${f.name}',${f.kcal100})">
+          <span>${f.name}</span><span class="ac-kcal">${kcal}千卡 / ${grams}g</span></div>`;
       });
     });
   }
-
-  // Online section
   if (online === null) {
     html += `<div class="ac-divider online">在线搜索</div>
       <div class="ac-loading"><span class="ac-spinner"></span>正在搜索「${q}」的营养数据…</div>`;
   } else if (online.length > 0) {
-    const label = online.length > 1
-      ? `在线搜索 — 有 ${online.length} 种结果，请选择 <span style="font-size:.62rem;opacity:.6">· Open Food Facts</span>`
+    const lbl = online.length > 1
+      ? `在线搜索 — ${online.length} 种结果，请选择 <span style="font-size:.62rem;opacity:.6">· Open Food Facts</span>`
       : `在线搜索结果 <span style="font-size:.62rem;opacity:.6">· Open Food Facts</span>`;
-    html += `<div class="ac-divider online">${label}</div>`;
+    html += `<div class="ac-divider online">${lbl}</div>`;
     online.forEach(r => {
       const kcal = Math.round(r.kcal100 * grams / 100);
-      const variantLabel = r.variant ? `<span class="ac-multi-label">· ${r.variant}</span>` : "";
-      html += `<div class="ac-item" onmousedown="selectAcItem(event,'${mealId}','${q}',${r.kcal100})">
-        <span>${q} ${variantLabel} <span class="ac-online-badge">网络</span></span>
-        <span class="ac-kcal">${kcal}千卡 / ${grams}g <span style="opacity:.5;font-size:.7rem">(${r.kcal100}/100g)</span></span>
-      </div>`;
+      const vl = r.variant ? `<span class="ac-multi-label">· ${r.variant}</span>` : "";
+      html += `<div class="ac-item" onmousedown="selectAcItem(event,'${q}',${r.kcal100})">
+        <span>${q} ${vl} <span class="ac-online-badge">网络</span></span>
+        <span class="ac-kcal">${kcal}千卡 / ${grams}g <span style="opacity:.5;font-size:.7rem">(${r.kcal100}/100g)</span></span></div>`;
     });
   } else if (!local.length) {
     html += `<div class="ac-divider">未找到数据</div>
       <div class="ac-loading" style="color:var(--bark)">「${q}」暂无数据，请手动输入热量</div>`;
   }
-
-  // Custom option always at bottom
   html += `<div class="ac-divider">自定义</div>
-    <div class="ac-item" onmousedown="showCustom(event,'${mealId}')">
-      <span>「${q}」— 手动输入热量</span><span class="ac-kcal">自定义</span>
-    </div>`;
-
-  ac.innerHTML = html;
-  ac.style.display = "block";
+    <div class="ac-item" onmousedown="showCustom(event)">
+      <span>「${q}」— 手动输入热量</span><span class="ac-kcal">自定义</span></div>`;
+  ac.innerHTML = html; ac.style.display = "block";
 }
 
-async function fetchOnlineCalories(q, mealId, local) {
+async function fetchOnlineCalories(q, local) {
   try {
-    const searchEl = document.getElementById("search-" + mealId);
-    if (!searchEl || searchEl.value.trim() !== q) return; // stale query
-
+    const el = document.getElementById("mainSearch");
+    if (!el || el.value.trim() !== q) return;
     const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&json=1&page_size=15&fields=product_name,nutriments&action=process`;
     const resp = await fetch(url, { signal: AbortSignal.timeout(6000) });
     const data = await resp.json();
-
-    const rawResults = [];
+    const raw = [];
     for (const p of (data.products || [])) {
-      const kcal100 = p.nutriments?.['energy-kcal_100g'] ?? p.nutriments?.['energy-kcal'];
-      if (!kcal100 || kcal100 < 1 || kcal100 > 900) continue;
-      rawResults.push({ kcal100: Math.round(kcal100) });
+      const k = p.nutriments?.['energy-kcal_100g'] ?? p.nutriments?.['energy-kcal'];
+      if (!k || k < 1 || k > 900) continue;
+      raw.push({ kcal100: Math.round(k) });
     }
-
-    if (!rawResults.length) {
-      acState[mealId] = { q, local, online: [], loading: false };
-      renderAcList(mealId, q, local, [], false);
+    if (!raw.length) {
+      acState = { q, local, online: [], loading: false };
+      if (document.getElementById("mainSearch")?.value.trim() === q) renderAcList(q, local, [], false);
       return;
     }
-
-    // Cluster by value (±15% of each other)
     const clusters = [];
-    rawResults.forEach(r => {
-      const ex = clusters.find(c => Math.abs(c.center - r.kcal100) / c.center < 0.15);
+    raw.forEach(r => {
+      const ex = clusters.find(c => Math.abs(c.center - r.kcal100)/c.center < 0.15);
       if (ex) { ex.items.push(r); ex.center = Math.round(ex.items.reduce((s,i)=>s+i.kcal100,0)/ex.items.length); }
       else clusters.push({ center: r.kcal100, items: [r] });
     });
-    clusters.sort((a, b) => b.items.length - a.items.length);
-    const top = clusters.slice(0, 3);
-    const values = top.map(c => c.center);
-    const spread = (Math.max(...values) - Math.min(...values)) / Math.min(...values);
-
+    clusters.sort((a,b) => b.items.length - a.items.length);
+    const top = clusters.slice(0,3);
+    const vals = top.map(c => c.center);
+    const spread = (Math.max(...vals) - Math.min(...vals)) / Math.min(...vals);
     let onlineResults;
     if (spread < 0.2 || top.length === 1) {
       onlineResults = [{ kcal100: top[0].center }];
     } else {
-      onlineResults = top.map((c, i) => ({
-        kcal100: c.center,
-        variant: i === 0 ? `${c.center}千卡/100g（最常见）` : `${c.center}千卡/100g`
-      }));
+      onlineResults = top.map((c,i) => ({ kcal100: c.center, variant: i===0 ? `${c.center}千卡/100g（最常见）` : `${c.center}千卡/100g` }));
     }
-
-    // If local has exact match and only 1 online result, skip online
     if (local.find(f => f.name === q) && onlineResults.length === 1) onlineResults = [];
-
-    acState[mealId] = { q, local, online: onlineResults, loading: false };
-    // Only re-render if this search is still the current one
-    if (document.getElementById("search-" + mealId)?.value.trim() === q) {
-      renderAcList(mealId, q, local, onlineResults, false);
-    }
-  } catch (err) {
-    if (acState[mealId]?.q === q) {
-      acState[mealId].loading = false;
-      acState[mealId].online = [];
-    }
-    renderAcList(mealId, q, local, [], false);
+    acState = { q, local, online: onlineResults, loading: false };
+    if (document.getElementById("mainSearch")?.value.trim() === q) renderAcList(q, local, onlineResults, false);
+  } catch(err) {
+    acState = { ...acState, loading: false, online: [] };
+    renderAcList(acState.q, acState.local, [], false);
   }
 }
 
-function onSearchKey(e, mealId) {
-  const ac = document.getElementById("ac-" + mealId);
+function onSearchKey(e) {
+  const ac = document.getElementById("mainAc");
   if (ac.style.display === "none") return;
   const items = ac.querySelectorAll(".ac-item");
   if (!items.length) return;
-  let idx = acSelected[mealId] ?? -1;
+  let idx = acSelectedIdx;
   if (e.key === "ArrowDown") { e.preventDefault(); idx = Math.min(idx+1, items.length-1); }
   else if (e.key === "ArrowUp") { e.preventDefault(); idx = Math.max(idx-1, 0); }
   else if (e.key === "Enter") { e.preventDefault(); if (idx >= 0) items[idx].dispatchEvent(new MouseEvent("mousedown")); return; }
   else if (e.key === "Escape") { ac.style.display = "none"; return; }
-  items.forEach((el, i) => el.classList.toggle("focused", i === idx));
-  acSelected[mealId] = idx;
+  items.forEach((el,i) => el.classList.toggle("focused", i===idx));
+  acSelectedIdx = idx;
 }
 
-function selectAcItem(e, mealId, name, kcal100) {
+function selectAcItem(e, name, kcal100) {
   e.preventDefault();
-  document.getElementById("search-" + mealId).value = name;
-  document.getElementById("search-" + mealId).dataset.kcal100 = kcal100;
-  document.getElementById("ac-" + mealId).style.display = "none";
-  document.getElementById("custom-kcal-row-" + mealId).style.display = "none";
+  const el = document.getElementById("mainSearch");
+  el.value = name; el.dataset.kcal100 = kcal100;
+  document.getElementById("mainAc").style.display = "none";
+  document.getElementById("customKcalRow").style.display = "none";
 }
 
-function showCustom(e, mealId) {
+function showCustom(e) {
   e.preventDefault();
-  document.getElementById("ac-" + mealId).style.display = "none";
-  document.getElementById("custom-kcal-row-" + mealId).style.display = "flex";
-  document.getElementById("custom-kcal-" + mealId).focus();
+  document.getElementById("mainAc").style.display = "none";
+  document.getElementById("customKcalRow").style.display = "flex";
+  document.getElementById("customKcal").focus();
 }
 
-function addCustom(mealId) {
-  const searchEl = document.getElementById("search-" + mealId);
+// ══════════════════════════════════
+//  ADD FOOD
+// ══════════════════════════════════
+function addFood() {
+  const searchEl = document.getElementById("mainSearch");
   const name = searchEl.value.trim();
   if (!name) { searchEl.focus(); return; }
-  const grams = parseFloat(document.getElementById("gram-" + mealId).value) || 100;
+  const grams = parseFloat(document.getElementById("mainGram").value) || 100;
 
-  // ① User already selected a calorie value from dropdown
-  const kcal100 = parseFloat(searchEl.dataset.kcal100 || 0);
-  if (kcal100 > 0) {
-    pushFood(mealId, name, grams, kcal100);
+  // ① selected from dropdown
+  const kcal100sel = parseFloat(searchEl.dataset.kcal100 || 0);
+  if (kcal100sel > 0) {
+    pushEntry(name, grams, kcal100sel);
     searchEl.value = ""; searchEl.dataset.kcal100 = "";
-    document.getElementById("ac-" + mealId).style.display = "none";
+    document.getElementById("mainAc").style.display = "none";
     return;
   }
-
-  // ② Exact match in local DB — use it directly
+  // ② exact local match
   const dbMatch = FOOD_DB.find(f => f.name === name);
   if (dbMatch) {
-    pushFood(mealId, name, grams, dbMatch.kcal100);
+    pushEntry(name, grams, dbMatch.kcal100);
     searchEl.value = "";
-    document.getElementById("ac-" + mealId).style.display = "none";
+    document.getElementById("mainAc").style.display = "none";
     return;
   }
-
-  // ③ Online results available or still loading — force user to select
-  const st = acState[mealId];
-  if (st && st.q === name) {
-    if (st.loading) {
-      // Still fetching: show warning and keep spinner visible
-      renderAcList(mealId, name, st.local, null, true);
-      return;
-    }
-    if ((st.online && st.online.length > 0) || st.local.length > 0) {
-      // Results exist: re-open dropdown with warning banner
-      renderAcList(mealId, name, st.local, st.online || [], true);
-      return;
+  // ③ results exist / loading → force select
+  if (acState.q === name) {
+    if (acState.loading) { renderAcList(name, acState.local, null, true); return; }
+    if ((acState.online && acState.online.length > 0) || acState.local.length > 0) {
+      renderAcList(name, acState.local, acState.online || [], true); return;
     }
   }
-
-  // ④ Truly no data found — show manual input
-  document.getElementById("ac-" + mealId).style.display = "none";
-  document.getElementById("custom-kcal-row-" + mealId).style.display = "flex";
-  document.getElementById("custom-kcal-" + mealId).focus();
+  // ④ no data → manual
+  document.getElementById("mainAc").style.display = "none";
+  document.getElementById("customKcalRow").style.display = "flex";
+  document.getElementById("customKcal").focus();
 }
 
-function addCustomConfirm(mealId) {
-  const searchEl = document.getElementById("search-" + mealId);
+function addFoodCustomConfirm() {
+  const searchEl = document.getElementById("mainSearch");
   const name = searchEl.value.trim() || "自定义食物";
-  const grams = parseFloat(document.getElementById("gram-" + mealId).value) || 100;
-  const kcal100 = parseFloat(document.getElementById("custom-kcal-" + mealId).value) || 0;
-  if (!kcal100) { document.getElementById("custom-kcal-" + mealId).focus(); return; }
-  pushFood(mealId, name, grams, kcal100);
+  const grams = parseFloat(document.getElementById("mainGram").value) || 100;
+  const kcal100 = parseFloat(document.getElementById("customKcal").value) || 0;
+  if (!kcal100) { document.getElementById("customKcal").focus(); return; }
+  pushEntry(name, grams, kcal100);
   searchEl.value = ""; searchEl.dataset.kcal100 = "";
-  document.getElementById("custom-kcal-row-" + mealId).style.display = "none";
-  document.getElementById("custom-kcal-" + mealId).value = "";
+  document.getElementById("customKcalRow").style.display = "none";
+  document.getElementById("customKcal").value = "";
 }
 
-function pushFood(mealId, name, grams, kcal100) {
-  state.meals[mealId].push({ name, grams, kcal100, kcal: Math.round(kcal100 * grams / 100) });
+function pushEntry(name, grams, kcal100) {
+  state.entries.push({ name, grams, kcal100, kcal: Math.round(kcal100 * grams / 100), time: nowTime() });
+  render();
+  // brief focus-back to search field for quick successive entries
+  setTimeout(() => document.getElementById("mainSearch").focus(), 50);
+}
+
+function removeEntry(idx) {
+  state.entries.splice(idx, 1);
   render();
 }
 
-function removeFood(mealId, idx) {
-  state.meals[mealId].splice(idx, 1);
-  render();
-}
-
-function updateGrams(mealId, idx, val) {
+function updateGrams(idx, val) {
   const grams = parseFloat(val) || 0;
-  const f = state.meals[mealId][idx];
-  f.grams = grams;
-  f.kcal = Math.round(f.kcal100 * grams / 100);
-  const cells = document.querySelectorAll(`#list-${mealId} .food-item-kcal`);
-  if (cells[idx]) cells[idx].textContent = f.kcal;
-  const total = mealTotal(mealId);
-  const m = MEALS.find(x => x.id === mealId);
-  const target = mealTarget(m);
-  const status = total > target * 1.15 ? "over" : total > target * 0.9 ? "warn" : "";
-  const totalEl = document.querySelector(`#mealsGrid .meal-card:nth-child(${MEALS.findIndex(x=>x.id===mealId)+1}) .meal-total`);
-  if (totalEl) { totalEl.textContent = total + " "; totalEl.className = "meal-total " + status; }
+  const e = state.entries[idx];
+  e.grams = grams;
+  e.kcal = Math.round(e.kcal100 * grams / 100);
+  const el = document.getElementById("ekcal-" + idx);
+  if (el) el.textContent = e.kcal;
   renderTopBar();
   renderSummary();
-  save();
+  saveToday();
 }
 
 function resetAll() {
   if (!confirm("确认清空今日所有记录？")) return;
-  state.meals = { breakfast: [], lunch: [], dinner: [], snack: [] };
+  state.entries = [];
   render();
 }
 
-// ── Target input ──
-document.getElementById("targetInput").addEventListener("change", e => {
-  state.target = parseInt(e.target.value) || 1478;
-  render();
-});
-document.getElementById("targetInput").addEventListener("input", e => {
-  state.target = parseInt(e.target.value) || 1478;
-  renderTopBar();
-  renderSummary();
+// close autocomplete on outside click
+document.addEventListener("click", e => {
+  const ac = document.getElementById("mainAc");
+  const search = document.getElementById("mainSearch");
+  if (ac && !ac.contains(e.target) && e.target !== search) ac.style.display = "none";
 });
 
-// ══════════════════════════════════════
+// target input
+document.getElementById("targetInput").addEventListener("change", e => {
+  state.target = parseInt(e.target.value) || 1478; render();
+});
+document.getElementById("targetInput").addEventListener("input", e => {
+  state.target = parseInt(e.target.value) || 1478; renderTopBar(); renderSummary();
+});
+
+// ══════════════════════════════════
 //  INIT
-// ══════════════════════════════════════
+// ══════════════════════════════════
 loadToday();
 document.getElementById("headerDate").textContent = formatDateFull(todayKey());
 render();
