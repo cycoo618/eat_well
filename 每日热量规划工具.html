@@ -461,6 +461,29 @@ const FOOD_DB = [
   { name:"开心果",     kcal100:562, defaultG:15,  cat:"坚果" },
   { name:"松子",       kcal100:673, defaultG:10,  cat:"坚果" },
   { name:"芝麻",       kcal100:573, defaultG:10,  cat:"坚果" },
+
+  // 品牌餐饮 (数据来自各品牌官网营养信息)
+  { name:"麦当劳·巨无霸",         alias:"Big Mac McDonald",        kcal100:275, defaultG:200, cat:"品牌餐饮" },
+  { name:"麦当劳·麦辣鸡腿堡",     alias:"McSpicy McDonald",        kcal100:266, defaultG:190, cat:"品牌餐饮" },
+  { name:"麦当劳·薯条(中)",        alias:"McDonald Fries medium",   kcal100:288, defaultG:117, cat:"品牌餐饮" },
+  { name:"麦当劳·麦乐鸡(6块)",    alias:"McNuggets McDonald",      kcal100:296, defaultG:96,  cat:"品牌餐饮" },
+  { name:"麦当劳·双层吉士堡",      alias:"Double Cheeseburger McD", kcal100:267, defaultG:165, cat:"品牌餐饮" },
+  { name:"肯德基·原味鸡(1块)",    alias:"KFC Original Recipe",     kcal100:228, defaultG:127, cat:"品牌餐饮" },
+  { name:"肯德基·劲辣鸡腿堡",     alias:"KFC Zinger Burger",       kcal100:282, defaultG:170, cat:"品牌餐饮" },
+  { name:"肯德基·蛋挞",           alias:"KFC egg tart",            kcal100:338, defaultG:80,  cat:"品牌餐饮" },
+  { name:"星巴克·拿铁(大杯全脂)",  alias:"Starbucks Latte Grande",  kcal100:40,  defaultG:473, cat:"品牌餐饮" },
+  { name:"星巴克·卡布奇诺(大杯)",  alias:"Starbucks Cappuccino",    kcal100:30,  defaultG:473, cat:"品牌餐饮" },
+  { name:"星巴克·美式咖啡",        alias:"Starbucks Americano",     kcal100:3,   defaultG:473, cat:"品牌餐饮" },
+  { name:"星巴克·摩卡(大杯全脂)",  alias:"Starbucks Mocha Grande",  kcal100:61,  defaultG:473, cat:"品牌餐饮" },
+  { name:"星巴克·焦糖玛奇朵(大杯)",alias:"Starbucks Caramel Macchiato", kcal100:52, defaultG:473, cat:"品牌餐饮" },
+  { name:"%Arabica·拿铁",         alias:"Arabica latte Kyoto",     kcal100:62,  defaultG:240, cat:"品牌餐饮" },
+  { name:"%Arabica·黑咖啡",       alias:"Arabica black coffee",    kcal100:4,   defaultG:150, cat:"品牌餐饮" },
+  { name:"瑞幸·生椰拿铁",         alias:"Luckin coconut latte",    kcal100:69,  defaultG:400, cat:"品牌餐饮" },
+  { name:"瑞幸·美式咖啡",         alias:"Luckin Americano",        kcal100:4,   defaultG:360, cat:"品牌餐饮" },
+  { name:"喜茶·多肉葡萄",         alias:"HEYTEA grape",            kcal100:48,  defaultG:500, cat:"品牌餐饮" },
+  { name:"喜茶·芝芝莓莓",         alias:"HEYTEA strawberry",       kcal100:41,  defaultG:700, cat:"品牌餐饮" },
+  { name:"奈雪·霸气草莓",         alias:"NAYUKI strawberry",       kcal100:50,  defaultG:500, cat:"品牌餐饮" },
+  { name:"蜜雪冰城·柠檬水",        alias:"MIXUE lemonade",          kcal100:28,  defaultG:700, cat:"品牌餐饮" },
 ];
 
 const POPULAR_FOODS = ["鸡胸肉","白米饭","鸡蛋","西兰花","苹果","糙米饭","番茄","豆腐","香蕉","燕麦","低脂牛奶","黄瓜"];
@@ -817,7 +840,11 @@ function onSearch(e) {
   document.getElementById("customKcalRow").style.display = "none";
   acSelectedIdx = -1;
   if (!q) { showPopular(); return; }
-  const local = FOOD_DB.filter(f => f.name.includes(q) || q.includes(f.name.slice(0,2)));
+  const ql = q.toLowerCase();
+  const local = FOOD_DB.filter(f =>
+    f.name.includes(q) ||
+    q.includes(f.name.slice(0,2)) ||
+    (f.alias && f.alias.toLowerCase().includes(ql)));
   acState = { q, local, online: null, loading: true };
   renderAcList(q, local, null, false);
   clearTimeout(searchTimer);
@@ -850,7 +877,7 @@ function renderAcList(q, local, online, warnMode) {
   } else if (online.length > 0) {
     const lbl = online.length > 1
       ? `在线搜索 — ${online.length} 种结果，请选择 <span style="font-size:.62rem;opacity:.6">· Open Food Facts</span>`
-      : `在线搜索结果 <span style="font-size:.62rem;opacity:.6">· Open Food Facts</span>`;
+      : `在线搜索结果 <span style="font-size:.62rem;opacity:.6">· 支持英文品牌名 · Open Food Facts</span>`;
     html += `<div class="ac-divider online">${lbl}</div>`;
     online.forEach(r => {
       const kcal = Math.round(r.kcal100 * grams / 100);
